@@ -57,7 +57,7 @@
         "node-sass": "^4.9.3",
         "object.omit": "^3.0.0",
         "opn": "^5.4.0",
-        "packez": "^1.0.11",
+        "packez": "^1.0.16",
         "postcss": "^7.0.5",
         "postcss-flexbugs-fixes": "^4.1.0",
         "postcss-loader": "^3.0.0",
@@ -78,9 +78,9 @@
         "*.md"
     ],
     "scripts": {
-        "demo": "node build/examples",
         "docs": "node build/docs",
         "start": "transform-es src -d lib -c -w",
+        "demo": "packez examples/index.js -d docs -w -c -m css,sass,babel,jsx",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "repository": {

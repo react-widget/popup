@@ -1,8 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import omit from 'omit.js';
-import _assign from 'object-assign';
 import position from 'bplokjs-position';
 
 function noop() { }
@@ -37,7 +35,7 @@ const propTypes = {
     onShow: PropTypes.func,
     onHide: PropTypes.func,
     getPosition: PropTypes.func,
-    placement: PropTypes.func,
+    placement: PropTypes.any,
     // jqueryui/position.js
     // of: PropTypes.any,
     // at: PropTypes.any,
@@ -59,10 +57,10 @@ export default class Popup extends React.Component {
         //禁用每次刷新更新位置
         disabledSetPosition: false,
         visible: true,
-        placement: () => ({
+        placement: {
             of: window,
             collision: 'flip', // none flip fit flipfit
-        })
+        }
 
     }
 
@@ -152,8 +150,7 @@ export default class Popup extends React.Component {
         const { visible } = this.state;
 
         if (visible) {
-            let pos = placement();
-            pos = isPromiseLike(pos) ? pos : Promise.resolve(pos);
+            const pos = isPromiseLike(placement) ? placement : Promise.resolve(placement);
 
             pos.then(opts => {
                 const position = this.getPosition(opts);
