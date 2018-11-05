@@ -116,7 +116,7 @@ export default class Popup extends React.Component {
         return result;
     }
 
-    setPosition(pos) {
+    setPosition(pos = {}) {
         const popup = this.getPopupDOM();
 
         if ('left' in pos) {
