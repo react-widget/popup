@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import position from 'bplokjs-position';
+import Transition from 'react-widget-transition/lib/Transition';
 
 function noop() { }
 
@@ -24,18 +25,19 @@ const propTypes = {
     rootProps: PropTypes.object,
     popupProps: PropTypes.object,
     popupMaskProps: PropTypes.object,
-    popupAnimate: PropTypes.shape({
-        appear: PropTypes.func,//enter
-        leave: PropTypes.func	//exit
-    }),
-    popupMaskAnimate: PropTypes.shape({
-        appear: PropTypes.func,
-        leave: PropTypes.func
-    }),
+    // popupAnimate: PropTypes.shape({
+    //     appear: PropTypes.func,//enter
+    //     leave: PropTypes.func	//exit
+    // }),
+    // popupMaskAnimate: PropTypes.shape({
+    //     appear: PropTypes.func,
+    //     leave: PropTypes.func
+    // }),
     onShow: PropTypes.func,
     onHide: PropTypes.func,
-    getPosition: PropTypes.func,
     placement: PropTypes.any,
+    transition: PropTypes.object,
+    maskTransition: PropTypes.object,
     // jqueryui/position.js
     // of: PropTypes.any,
     // at: PropTypes.any,
@@ -56,6 +58,8 @@ export default class Popup extends React.Component {
         destroyOnHide: true,
         //禁用每次刷新更新位置
         disabledSetPosition: false,
+        transition: null,
+        maskTransition: null,
         visible: true,
         placement: {
             of: window,
@@ -146,8 +150,7 @@ export default class Popup extends React.Component {
     }
 
     componentDidMount() {
-        const { placement } = this.props;
-        const { visible } = this.state;
+        const { placement, visible } = this.props;
 
         if (visible) {
             const pos = isPromiseLike(placement) ? placement : Promise.resolve(placement);
@@ -155,7 +158,6 @@ export default class Popup extends React.Component {
             pos.then(opts => {
                 const position = this.getPosition(opts);
                 this.setPosition(position.pos);
-                this.animateAppear();
             });
         }
     }
@@ -168,77 +170,18 @@ export default class Popup extends React.Component {
     //     }
     // }
 
-    shouldComponentUpdate({ visible }) {
-        const state = this.state;
+    // shouldComponentUpdate({ visible }) {
+    //     const state = this.state;
 
-        if (!visible && state.hidden) return false;
+    //     if (!visible && state.hidden) return false;
 
-        return !!(state.visible || visible);
-    }
+    //     return !!(state.visible || visible);
+    // }
 
     cancelCallback = noop
 
     componentDidUpdate() {
-        const props = this.props;
-        const state = this.state;
-        const popup = this.getPopupDOM(), mask = this.getPopupMaskDOM();
-
-        if (!state.visible) return;
-
-        if (!props.visible) {
-            if (state.hidden) return;
-
-            state.exiting = true;
-            state.hidden = true;
-
-            let once = false;
-            this.cancelCallback = () => {
-                if (once) return;
-                once = true;
-                //必须使用this.state
-                this.state.exiting = false;
-                this.cancelCallback = noop;
-                //此处props可以不用加this
-                if (props.destroyOnHide) {
-                    //设置了shouldComponentUpdate
-                    //此处必须用forceUpdate更新
-                    this.state.visible = false;
-                    this.forceUpdate();
-                } else {
-                    if (popup) {
-                        popup.style.display = "none";
-                    }
-                    if (mask) {
-                        mask.style.display = "none";
-                    }
-                }
-            }
-
-            this.animateLeave(null, this.cancelCallback);
-
-        } else {
-            if (state.exiting) {
-                this.cancelCallback();
-            }
-
-            const hidden = state.hidden;
-
-            if (hidden) {
-                state.hidden = false;
-                if (popup) {
-                    popup.style.display = "";
-                }
-                if (mask) {
-                    mask.style.display = "";
-                }
-            }
-
-            this.showPopup();
-            //隐藏->显示
-            if (hidden) {
-                this.animateAppear();
-            }
-        }
+        this.componentDidMount();
     }
 
     componentWillUnmount() {
@@ -247,43 +190,6 @@ export default class Popup extends React.Component {
         }
     }
 
-    animateAppear = () => {
-        const { popupAnimate, popupMaskAnimate, onShow } = this.props;
-        const popup = this.getPopupDOM(), mask = this.getPopupMaskDOM();
-
-        this._initAppear = true;
-
-        if (popupAnimate && popupAnimate.appear) {
-            popupAnimate.appear(popup);
-        }
-
-        if (popupMaskAnimate && popupMaskAnimate.appear) {
-            popupMaskAnimate.appear(mask);
-        }
-
-        if (onShow) {
-            onShow(popup, mask)
-        }
-    }
-
-    animateLeave = (node, done) => {
-        const { popupAnimate, popupMaskAnimate, onHide } = this.props;
-        const popup = this.getPopupDOM(), mask = this.getPopupMaskDOM();
-
-        if (this.state.enableAnim && popupAnimate && popupAnimate.leave) {
-            popupAnimate.leave(popup, done);
-        } else {
-            done();
-        }
-
-        if (this.state.enableAnim && popupMaskAnimate && popupMaskAnimate.leave) {
-            popupMaskAnimate.leave(mask, () => { });
-        }
-
-        if (onHide) {
-            onHide(popup, mask)
-        }
-    }
 
     showPopup() {
         if (!this.props.disabledSetPosition) {
@@ -329,7 +235,14 @@ export default class Popup extends React.Component {
         return this._popupMaskDOM;
     }
 
-    getMaskComponent() {
+    onTransitionChange = (action, ...args) => {
+        const props = this.props;
+        if (props[action]) {
+            props[action](...args);
+        }
+    }
+
+    renderPopupMask() {
         const { prefixCls, mask, maskClassName, popupMaskProps, fixed } = this.props;
 
         const classes = classNames({
@@ -338,34 +251,72 @@ export default class Popup extends React.Component {
             [maskClassName]: maskClassName
         });
 
-        return (
-            <div onMouseDown={this.handleMaskMouseDown} onClick={this.handleMaskClick} {...popupMaskProps} ref={this.savePopupMaskDOM} className={classes}></div>
-        );
+        return mask ?
+            <div
+                onMouseDown={this.handleMaskMouseDown}
+                onClick={this.handleMaskClick}
+                {...popupMaskProps}
+                ref={this.savePopupMaskDOM}
+                className={classes}
+            ></div> :
+            null;
     }
 
-    getPopupComponent() {
+    renderPopup() {
         const {
             prefixCls,
             className,
             fixed,
-            mask,
             style,
             popupProps,
             children,
+            visible,
+            transition,
+            destroyOnHide,
             rootComponent: RootComponent
         } = this.props;
+        const self = this;
 
         const classes = classNames(prefixCls, fixed ? prefixCls + '-fixed' : '', className);
 
+        const transitionOpts = Object.assign({}, transition, {
+            enter: !!transition,
+            exit: !!transition,
+            onEntered() {
+                if (!destroyOnHide) {
+                    const popup = self.getPopupDOM();
+                    popup.style.display = '';
+                }
+                console.log('onEntered', this)
+            },
+            onExited() {
+                if (!destroyOnHide) {
+                    const popup = self.getPopupDOM();
+                    popup.style.display = 'none';
+                }
+                console.log('onExited')
+            }
+        });
+
+        //enter exit
         return (
             <RootComponent>
-                {mask ? this.getMaskComponent() : null}
-                <div tabIndex={-1} style={style} {...popupProps} ref={this.savePopupDOM} className={classes}>{children}</div>
+                {this.renderPopupMask()}
+                <Transition
+                    timeout={0}
+                    {...transitionOpts}
+                    in={visible}
+                    unmountOnExit={destroyOnHide}
+                    mountOnEnter
+                    appear
+                >
+                    <div tabIndex={-1} style={style} {...popupProps} ref={this.savePopupDOM} className={classes}>{children}</div>
+                </Transition>
             </RootComponent>
         );
     }
 
     render() {
-        return this.state.visible ? this.getPopupComponent() : null;
+        return this.renderPopup();
     }
 }

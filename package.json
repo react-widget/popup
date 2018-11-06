@@ -11,6 +11,7 @@
         "prop-types": "^15.6.2",
         "react": "^16.5.2",
         "react-dom": "^16.5.2",
+        "react-widget-transition": "^1.0.0",
         "warning": "^4.0.2"
     },
     "devDependencies": {
@@ -44,6 +45,7 @@
         "@babel/preset-react": "^7.0.0",
         "autoprefixer": "^9.1.5",
         "babel-loader": "^8.0.4",
+        "bplokjs-deferred": "^1.0.0",
         "chalk": "^2.4.1",
         "clean-webpack-plugin": "^0.1.19",
         "css-loader": "^1.0.0",

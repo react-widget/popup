@@ -27,6 +27,13 @@
   .table-tree td {
     border-bottom: 1px solid #F2F2F2; }
 
+.dialog {
+  width: 150px;
+  height: 150px;
+  border: 1px solid #000;
+  text-align: center;
+  background: #efefef; }
+
 
 .rw-popup-root {
   /*position:absolute;
@@ -55,4 +62,4 @@
   opacity: 0.1; }
 
 
-/*# sourceMappingURL=index.88e9a681.css.map*/
+/*# sourceMappingURL=index.86c6a3dc.css.map*/

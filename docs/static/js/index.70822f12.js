@@ -312,6 +312,8 @@ var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "./node_mo
 
 var _lib = _interopRequireDefault(__webpack_require__(/*! ../../lib */ "./lib/index.js"));
 
+var _bplokjsDeferred = _interopRequireDefault(__webpack_require__(/*! bplokjs-deferred */ "./node_modules/bplokjs-deferred/index.js"));
+
 var DEMO =
 /*#__PURE__*/
 function (_Component) {
@@ -333,22 +335,47 @@ function (_Component) {
       visible: false
     });
     (0, _defineProperty2.default)((0, _assertThisInitialized2.default)((0, _assertThisInitialized2.default)(_this)), "toggleClick", function (e) {
+      var visible = _this.state.visible;
+
       _this.setState({
-        visible: true
+        visible: !visible
       });
     });
+    (0, _defineProperty2.default)((0, _assertThisInitialized2.default)((0, _assertThisInitialized2.default)(_this)), "refButton", function (dom) {
+      _this._defer.resolve({
+        of: dom,
+        my: 'left top',
+        at: 'left bottom'
+      });
+    });
+    (0, _defineProperty2.default)((0, _assertThisInitialized2.default)((0, _assertThisInitialized2.default)(_this)), "_defer", (0, _bplokjsDeferred.default)());
     return _this;
   }
 
   (0, _createClass2.default)(DEMO, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {}
+  }, {
     key: "render",
     value: function render() {
       var visible = this.state.visible;
       return _react.default.createElement("div", null, _react.default.createElement("button", {
         onClick: this.toggleClick
       }, "\u663E\u793A"), _react.default.createElement(_lib.default, {
-        visible: visible
-      }, "test..."));
+        visible: visible,
+        destroyOnHide: true
+      }, _react.default.createElement("div", {
+        className: "dialog"
+      }, "test...")), _react.default.createElement("button", {
+        onClick: this.toggleClick,
+        ref: this.refButton
+      }, "trigger"), _react.default.createElement(_lib.default, {
+        visible: visible,
+        destroyOnHide: true,
+        placement: this._defer
+      }, _react.default.createElement("div", {
+        className: "dialog"
+      }, "trigger...")));
     }
   }]);
   return DEMO;
@@ -412,6 +439,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
+var _assign = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/object/assign */ "./node_modules/@babel/runtime-corejs2/core-js/object/assign.js"));
+
 var _extends2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/extends */ "./node_modules/@babel/runtime-corejs2/helpers/extends.js"));
 
 var _promise = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/promise */ "./node_modules/@babel/runtime-corejs2/core-js/promise.js"));
@@ -438,6 +467,8 @@ var _classnames = _interopRequireDefault(__webpack_require__(/*! classnames */ "
 
 var _bplokjsPosition = _interopRequireDefault(__webpack_require__(/*! bplokjs-position */ "./node_modules/bplokjs-position/index.js"));
 
+var _Transition = _interopRequireDefault(__webpack_require__(/*! react-widget-transition/lib/Transition */ "./node_modules/react-widget-transition/lib/Transition.js"));
+
 function noop() {}
 
 function isPromiseLike(promise) {
@@ -459,20 +490,19 @@ var propTypes = {
   rootProps: _propTypes.default.object,
   popupProps: _propTypes.default.object,
   popupMaskProps: _propTypes.default.object,
-  popupAnimate: _propTypes.default.shape({
-    appear: _propTypes.default.func,
-    //enter
-    leave: _propTypes.default.func //exit
-
-  }),
-  popupMaskAnimate: _propTypes.default.shape({
-    appear: _propTypes.default.func,
-    leave: _propTypes.default.func
-  }),
+  // popupAnimate: PropTypes.shape({
+  //     appear: PropTypes.func,//enter
+  //     leave: PropTypes.func	//exit
+  // }),
+  // popupMaskAnimate: PropTypes.shape({
+  //     appear: PropTypes.func,
+  //     leave: PropTypes.func
+  // }),
   onShow: _propTypes.default.func,
   onHide: _propTypes.default.func,
-  getPosition: _propTypes.default.func,
-  placement: _propTypes.default.any // jqueryui/position.js
+  placement: _propTypes.default.any,
+  transition: _propTypes.default.object,
+  maskTransition: _propTypes.default.object // jqueryui/position.js
   // of: PropTypes.any,
   // at: PropTypes.any,
   // my: PropTypes.any,
@@ -494,11 +524,11 @@ function (_React$Component) {
 
     (0, _classCallCheck2.default)(this, Popup);
 
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
+    for (var _len = arguments.length, _args = new Array(_len), _key = 0; _key < _len; _key++) {
+      _args[_key] = arguments[_key];
     }
 
-    _this = (0, _possibleConstructorReturn2.default)(this, (_getPrototypeOf2 = (0, _getPrototypeOf3.default)(Popup)).call.apply(_getPrototypeOf2, [this].concat(args)));
+    _this = (0, _possibleConstructorReturn2.default)(this, (_getPrototypeOf2 = (0, _getPrototypeOf3.default)(Popup)).call.apply(_getPrototypeOf2, [this].concat(_args)));
     (0, _defineProperty2.default)((0, _assertThisInitialized2.default)((0, _assertThisInitialized2.default)(_this)), "state", {
       visible: true,
       enableAnim: true,
@@ -508,52 +538,6 @@ function (_React$Component) {
     (0, _defineProperty2.default)((0, _assertThisInitialized2.default)((0, _assertThisInitialized2.default)(_this)), "_initAppear", false);
     (0, _defineProperty2.default)((0, _assertThisInitialized2.default)((0, _assertThisInitialized2.default)(_this)), "_of", null);
     (0, _defineProperty2.default)((0, _assertThisInitialized2.default)((0, _assertThisInitialized2.default)(_this)), "cancelCallback", noop);
-    (0, _defineProperty2.default)((0, _assertThisInitialized2.default)((0, _assertThisInitialized2.default)(_this)), "animateAppear", function () {
-      var _this$props = _this.props,
-          popupAnimate = _this$props.popupAnimate,
-          popupMaskAnimate = _this$props.popupMaskAnimate,
-          onShow = _this$props.onShow;
-
-      var popup = _this.getPopupDOM(),
-          mask = _this.getPopupMaskDOM();
-
-      _this._initAppear = true;
-
-      if (popupAnimate && popupAnimate.appear) {
-        popupAnimate.appear(popup);
-      }
-
-      if (popupMaskAnimate && popupMaskAnimate.appear) {
-        popupMaskAnimate.appear(mask);
-      }
-
-      if (onShow) {
-        onShow(popup, mask);
-      }
-    });
-    (0, _defineProperty2.default)((0, _assertThisInitialized2.default)((0, _assertThisInitialized2.default)(_this)), "animateLeave", function (node, done) {
-      var _this$props2 = _this.props,
-          popupAnimate = _this$props2.popupAnimate,
-          popupMaskAnimate = _this$props2.popupMaskAnimate,
-          onHide = _this$props2.onHide;
-
-      var popup = _this.getPopupDOM(),
-          mask = _this.getPopupMaskDOM();
-
-      if (_this.state.enableAnim && popupAnimate && popupAnimate.leave) {
-        popupAnimate.leave(popup, done);
-      } else {
-        done();
-      }
-
-      if (_this.state.enableAnim && popupMaskAnimate && popupMaskAnimate.leave) {
-        popupMaskAnimate.leave(mask, function () {});
-      }
-
-      if (onHide) {
-        onHide(popup, mask);
-      }
-    });
     (0, _defineProperty2.default)((0, _assertThisInitialized2.default)((0, _assertThisInitialized2.default)(_this)), "handleMaskClick", function (e) {
       var onMaskClick = _this.props.onMaskClick;
 
@@ -576,6 +560,17 @@ function (_React$Component) {
     });
     (0, _defineProperty2.default)((0, _assertThisInitialized2.default)((0, _assertThisInitialized2.default)(_this)), "savePopupMaskDOM", function (node) {
       _this._popupMaskDOM = node;
+    });
+    (0, _defineProperty2.default)((0, _assertThisInitialized2.default)((0, _assertThisInitialized2.default)(_this)), "onTransitionChange", function (action) {
+      var props = _this.props;
+
+      if (props[action]) {
+        for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+          args[_key2 - 1] = arguments[_key2];
+        }
+
+        props[action].apply(props, args);
+      }
     });
     return _this;
   }
@@ -624,7 +619,8 @@ function (_React$Component) {
     }
   }, {
     key: "setPosition",
-    value: function setPosition(pos) {
+    value: function setPosition() {
+      var pos = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
       var popup = this.getPopupDOM();
 
       if ('left' in pos) {
@@ -659,8 +655,9 @@ function (_React$Component) {
     value: function componentDidMount() {
       var _this2 = this;
 
-      var placement = this.props.placement;
-      var visible = this.state.visible;
+      var _this$props = this.props,
+          placement = _this$props.placement,
+          visible = _this$props.visible;
 
       if (visible) {
         var pos = isPromiseLike(placement) ? placement : _promise.default.resolve(placement);
@@ -668,8 +665,6 @@ function (_React$Component) {
           var position = _this2.getPosition(opts);
 
           _this2.setPosition(position.pos);
-
-          _this2.animateAppear();
         });
       }
     } // componentWillReceiveProps({ visible }) {
@@ -679,82 +674,16 @@ function (_React$Component) {
     //         });
     //     }
     // }
+    // shouldComponentUpdate({ visible }) {
+    //     const state = this.state;
+    //     if (!visible && state.hidden) return false;
+    //     return !!(state.visible || visible);
+    // }
 
-  }, {
-    key: "shouldComponentUpdate",
-    value: function shouldComponentUpdate(_ref) {
-      var visible = _ref.visible;
-      var state = this.state;
-      if (!visible && state.hidden) return false;
-      return !!(state.visible || visible);
-    }
   }, {
     key: "componentDidUpdate",
     value: function componentDidUpdate() {
-      var _this3 = this;
-
-      var props = this.props;
-      var state = this.state;
-      var popup = this.getPopupDOM(),
-          mask = this.getPopupMaskDOM();
-      if (!state.visible) return;
-
-      if (!props.visible) {
-        if (state.hidden) return;
-        state.exiting = true;
-        state.hidden = true;
-        var once = false;
-
-        this.cancelCallback = function () {
-          if (once) return;
-          once = true; //必须使用this.state
-
-          _this3.state.exiting = false;
-          _this3.cancelCallback = noop; //此处props可以不用加this
-
-          if (props.destroyOnHide) {
-            //设置了shouldComponentUpdate
-            //此处必须用forceUpdate更新
-            _this3.state.visible = false;
-
-            _this3.forceUpdate();
-          } else {
-            if (popup) {
-              popup.style.display = "none";
-            }
-
-            if (mask) {
-              mask.style.display = "none";
-            }
-          }
-        };
-
-        this.animateLeave(null, this.cancelCallback);
-      } else {
-        if (state.exiting) {
-          this.cancelCallback();
-        }
-
-        var hidden = state.hidden;
-
-        if (hidden) {
-          state.hidden = false;
-
-          if (popup) {
-            popup.style.display = "";
-          }
-
-          if (mask) {
-            mask.style.display = "";
-          }
-        }
-
-        this.showPopup(); //隐藏->显示
-
-        if (hidden) {
-          this.animateAppear();
-        }
-      }
+      this.componentDidMount();
     }
   }, {
     key: "componentWillUnmount",
@@ -786,50 +715,81 @@ function (_React$Component) {
       return this._popupMaskDOM;
     }
   }, {
-    key: "getMaskComponent",
-    value: function getMaskComponent() {
+    key: "renderPopupMask",
+    value: function renderPopupMask() {
       var _classNames;
 
-      var _this$props3 = this.props,
-          prefixCls = _this$props3.prefixCls,
-          mask = _this$props3.mask,
-          maskClassName = _this$props3.maskClassName,
-          popupMaskProps = _this$props3.popupMaskProps,
-          fixed = _this$props3.fixed;
+      var _this$props2 = this.props,
+          prefixCls = _this$props2.prefixCls,
+          mask = _this$props2.mask,
+          maskClassName = _this$props2.maskClassName,
+          popupMaskProps = _this$props2.popupMaskProps,
+          fixed = _this$props2.fixed;
       var classes = (0, _classnames.default)((_classNames = {}, (0, _defineProperty2.default)(_classNames, "".concat(prefixCls, "-mask"), true), (0, _defineProperty2.default)(_classNames, "".concat(prefixCls, "-mask-fixed"), fixed), (0, _defineProperty2.default)(_classNames, maskClassName, maskClassName), _classNames));
-      return _react.default.createElement("div", (0, _extends2.default)({
+      return mask ? _react.default.createElement("div", (0, _extends2.default)({
         onMouseDown: this.handleMaskMouseDown,
         onClick: this.handleMaskClick
       }, popupMaskProps, {
         ref: this.savePopupMaskDOM,
         className: classes
-      }));
+      })) : null;
     }
   }, {
-    key: "getPopupComponent",
-    value: function getPopupComponent() {
-      var _this$props4 = this.props,
-          prefixCls = _this$props4.prefixCls,
-          className = _this$props4.className,
-          fixed = _this$props4.fixed,
-          mask = _this$props4.mask,
-          style = _this$props4.style,
-          popupProps = _this$props4.popupProps,
-          children = _this$props4.children,
-          RootComponent = _this$props4.rootComponent;
+    key: "renderPopup",
+    value: function renderPopup() {
+      var _this$props3 = this.props,
+          prefixCls = _this$props3.prefixCls,
+          className = _this$props3.className,
+          fixed = _this$props3.fixed,
+          style = _this$props3.style,
+          popupProps = _this$props3.popupProps,
+          children = _this$props3.children,
+          visible = _this$props3.visible,
+          transition = _this$props3.transition,
+          destroyOnHide = _this$props3.destroyOnHide,
+          RootComponent = _this$props3.rootComponent;
+      var self = this;
       var classes = (0, _classnames.default)(prefixCls, fixed ? prefixCls + '-fixed' : '', className);
-      return _react.default.createElement(RootComponent, null, mask ? this.getMaskComponent() : null, _react.default.createElement("div", (0, _extends2.default)({
+      var transitionOpts = (0, _assign.default)({}, transition, {
+        enter: !!transition,
+        exit: !!transition,
+        onEntered: function onEntered() {
+          if (!destroyOnHide) {
+            var popup = self.getPopupDOM();
+            popup.style.display = '';
+          }
+
+          console.log('onEntered', this);
+        },
+        onExited: function onExited() {
+          if (!destroyOnHide) {
+            var popup = self.getPopupDOM();
+            popup.style.display = 'none';
+          }
+
+          console.log('onExited');
+        }
+      }); //enter exit
+
+      return _react.default.createElement(RootComponent, null, this.renderPopupMask(), _react.default.createElement(_Transition.default, (0, _extends2.default)({
+        timeout: 0
+      }, transitionOpts, {
+        in: visible,
+        unmountOnExit: destroyOnHide,
+        mountOnEnter: true,
+        appear: true
+      }), _react.default.createElement("div", (0, _extends2.default)({
         tabIndex: -1,
         style: style
       }, popupProps, {
         ref: this.savePopupDOM,
         className: classes
-      }), children));
+      }), children)));
     }
   }, {
     key: "render",
     value: function render() {
-      return this.state.visible ? this.getPopupComponent() : null;
+      return this.renderPopup();
     }
   }], [{
     key: "getDerivedStateFromProps",
@@ -856,6 +816,8 @@ exports.default = Popup;
   destroyOnHide: true,
   //禁用每次刷新更新位置
   disabledSetPosition: false,
+  transition: null,
+  maskTransition: null,
   visible: true,
   placement: {
     of: window,
@@ -884,12 +846,12 @@ exports.default = Popup;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! D:\wamp\www\github-projects\react-widget\popup\node_modules\packez\lib\fetchPolyfills.js */"./node_modules/packez/lib/fetchPolyfills.js");
-__webpack_require__(/*! D:\wamp\www\github-projects\react-widget\popup\node_modules\packez\lib\polyfills.js */"./node_modules/packez/lib/polyfills.js");
-module.exports = __webpack_require__(/*! D:\wamp\www\github-projects\react-widget\popup\examples\index.js */"./examples/index.js");
+__webpack_require__(/*! D:\wamp64\www\github-project\react-widget\popup\node_modules\packez\lib\fetchPolyfills.js */"./node_modules/packez/lib/fetchPolyfills.js");
+__webpack_require__(/*! D:\wamp64\www\github-project\react-widget\popup\node_modules\packez\lib\polyfills.js */"./node_modules/packez/lib/polyfills.js");
+module.exports = __webpack_require__(/*! D:\wamp64\www\github-project\react-widget\popup\examples\index.js */"./examples/index.js");
 
 
 /***/ })
 
 /******/ });
-//# sourceMappingURL=index.f8d89235.js.map
+//# sourceMappingURL=index.70822f12.js.map
