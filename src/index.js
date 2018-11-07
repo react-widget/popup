@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { Fragment } from 'react';
+import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import position from 'bplokjs-position';
 import Transition from 'react-widget-transition/lib/Transition';
+import warning from 'warning';
+import Identity from './Identity';
 
 function noop() { }
 
@@ -15,52 +18,43 @@ const propTypes = {
     className: PropTypes.string,
     mask: PropTypes.bool,
     maskClassName: PropTypes.string,
-    destroyOnHide: PropTypes.bool,
     visible: PropTypes.bool,
     fixed: PropTypes.bool,
-    disabledSetPosition: PropTypes.bool,
+    refreshPositionOnUpdate: PropTypes.bool,
     onMaskClick: PropTypes.func,
     onMaskMouseDown: PropTypes.func,
     rootComponent: PropTypes.any,
+    popupComponent: PropTypes.any,
     rootProps: PropTypes.object,
     popupProps: PropTypes.object,
     popupMaskProps: PropTypes.object,
-    // popupAnimate: PropTypes.shape({
-    //     appear: PropTypes.func,//enter
-    //     leave: PropTypes.func	//exit
-    // }),
-    // popupMaskAnimate: PropTypes.shape({
-    //     appear: PropTypes.func,
-    //     leave: PropTypes.func
-    // }),
-    onShow: PropTypes.func,
-    onHide: PropTypes.func,
+
+    addEndListener: PropTypes.func,
+    timeout: PropTypes.any,
+
+    onEntered: PropTypes.func,
+    onExited: PropTypes.func,
+    mountOnEnter: PropTypes.bool,
     placement: PropTypes.any,
-    transition: PropTypes.object,
-    maskTransition: PropTypes.object,
-    // jqueryui/position.js
-    // of: PropTypes.any,
-    // at: PropTypes.any,
-    // my: PropTypes.any,
-    // collision: PropTypes.any,
-    // using: PropTypes.func,
-    // within: PropTypes.any,
 };
 
 export default class Popup extends React.Component {
     static propTypes = propTypes
 
+    static childContextTypes = {
+        transitionGroup: () => { },
+    }
+
     static defaultProps = {
         prefixCls: 'rw-popup',
         rootComponent: React.Fragment,
+        popupComponent: 'div',
         mask: false,
         fixed: false,
-        destroyOnHide: true,
         //禁用每次刷新更新位置
-        disabledSetPosition: false,
-        transition: null,
-        maskTransition: null,
+        refreshPositionOnUpdate: false,
         visible: true,
+        addEndListener: noop,
         placement: {
             of: window,
             collision: 'flip', // none flip fit flipfit
@@ -68,20 +62,12 @@ export default class Popup extends React.Component {
 
     }
 
-    static getDerivedStateFromProps(props, state) {
-        if (state.visible || props.visible) {
-            return {
-                visible: true
-            }
-        }
-        return null;
-    }
+    // static getDerivedStateFromProps(props, state) {
+    //     return {}
+    // }
 
-    state = {
-        visible: true,
-        enableAnim: true,
-        hidden: false,
-        exiting: false,
+    getChildContext() {
+        return { transitionGroup: null }
     }
 
     getPosition(opts) {
@@ -137,18 +123,6 @@ export default class Popup extends React.Component {
         }
     }
 
-    _initAppear = false;
-    _of = null
-    updatePosition(of = null) {
-        // this._of = of;
-        // this.setPosition();
-        // this._of = null;
-
-        // if (!this._initAppear) {
-        //     this.animateAppear();
-        // }
-    }
-
     componentDidMount() {
         const { placement, visible } = this.props;
 
@@ -162,32 +136,14 @@ export default class Popup extends React.Component {
         }
     }
 
-    // componentWillReceiveProps({ visible }) {
-    //     if (this.state.visible || visible) {
-    //         this.setState({
-    //             visible: true
-    //         });
-    //     }
-    // }
-
-    // shouldComponentUpdate({ visible }) {
-    //     const state = this.state;
-
-    //     if (!visible && state.hidden) return false;
-
-    //     return !!(state.visible || visible);
-    // }
-
-    cancelCallback = noop
-
     componentDidUpdate() {
+        const { refreshPositionOnUpdate, visible } = this.props;
+        //if (visible && refreshPositionOnUpdate) {
         this.componentDidMount();
+        //}
     }
 
     componentWillUnmount() {
-        if (this.state.isHidden) {
-            this.state.enableAnim = false;
-        }
     }
 
 
@@ -211,16 +167,12 @@ export default class Popup extends React.Component {
         }
     }
 
-    saveRootDOM = (node) => {
-        this._rootDOM = node;
+    refPopup = (el) => {
+        this._popupRef = el;
     }
 
-    savePopupDOM = (node) => {
-        this._popupDOM = node;
-    }
-
-    savePopupMaskDOM = (node) => {
-        this._popupMaskDOM = node;
+    refPopupMask = (el) => {
+        this._popupMaskRef = el;
     }
 
     getRootDOM() {
@@ -228,18 +180,11 @@ export default class Popup extends React.Component {
     }
 
     getPopupDOM() {
-        return this._popupDOM;
+        return ReactDOM.findDOMNode(this._popupRef);
     }
 
     getPopupMaskDOM() {
-        return this._popupMaskDOM;
-    }
-
-    onTransitionChange = (action, ...args) => {
-        const props = this.props;
-        if (props[action]) {
-            props[action](...args);
-        }
+        return this._popupMaskRef ? ReactDOM.findDOMNode(this._popupMaskRef) : null;
     }
 
     renderPopupMask() {
@@ -256,10 +201,21 @@ export default class Popup extends React.Component {
                 onMouseDown={this.handleMaskMouseDown}
                 onClick={this.handleMaskClick}
                 {...popupMaskProps}
-                ref={this.savePopupMaskDOM}
+                ref={this.refPopupMask}
                 className={classes}
             ></div> :
             null;
+    }
+
+    onTransitionChange(action, node, appearing) {
+        const props = this.props;
+        const pupupMaskDOM = this.getPopupMaskDOM();
+
+        if (props[action]) {
+            props[action](node, pupupMaskDOM);
+        }
+
+        console.log(action)
     }
 
     renderPopup() {
@@ -271,46 +227,52 @@ export default class Popup extends React.Component {
             popupProps,
             children,
             visible,
-            transition,
-            destroyOnHide,
-            rootComponent: RootComponent
+            timeout,
+            addEndListener,
+            rootComponent: RootComponent,
+            popupComponent: PopupComponent
         } = this.props;
-        const self = this;
 
         const classes = classNames(prefixCls, fixed ? prefixCls + '-fixed' : '', className);
 
-        const transitionOpts = Object.assign({}, transition, {
-            enter: !!transition,
-            exit: !!transition,
-            onEntered() {
-                if (!destroyOnHide) {
-                    const popup = self.getPopupDOM();
-                    popup.style.display = '';
-                }
-                console.log('onEntered', this)
-            },
-            onExited() {
-                if (!destroyOnHide) {
-                    const popup = self.getPopupDOM();
-                    popup.style.display = 'none';
-                }
-                console.log('onExited')
-            }
-        });
+        warning(PopupComponent !== Fragment, `popupComponent receive a Fragment Component!`);
 
-        //enter exit
         return (
             <RootComponent>
                 {this.renderPopupMask()}
                 <Transition
-                    timeout={0}
-                    {...transitionOpts}
+                    timeout={timeout}
+                    addEndListener={
+                        timeout == null && addEndListener === noop ?
+                            (node, cb) => cb() :
+                            addEndListener
+                    }
+
                     in={visible}
-                    unmountOnExit={destroyOnHide}
+
+                    onEnter={this.onTransitionChange.bind(this, 'onEnter')}
+                    onEntering={this.onTransitionChange.bind(this, 'onEntering')}
+                    onEntered={this.onTransitionChange.bind(this, 'onEntered')}
+
+                    onExit={this.onTransitionChange.bind(this, 'onExit')}
+                    onExiting={this.onTransitionChange.bind(this, 'onExiting')}
+                    onExited={this.onTransitionChange.bind(this, 'onExited')}
+
+                    unmountOnExit
                     mountOnEnter
+                    enter
+                    exit
                     appear
                 >
-                    <div tabIndex={-1} style={style} {...popupProps} ref={this.savePopupDOM} className={classes}>{children}</div>
+                    <PopupComponent
+                        tabIndex={-1}
+                        style={style}
+                        {...popupProps}
+                        ref={this.refPopup}
+                        className={classes}
+                    >
+                        {children}
+                    </PopupComponent>
                 </Transition>
             </RootComponent>
         );

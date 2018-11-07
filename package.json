@@ -6,6 +6,8 @@
     "dependencies": {
         "@babel/runtime": "^7.1.2",
         "@babel/runtime-corejs2": "^7.1.2",
+        "bplokjs-dom-utils": "^1.0.2",
+        "bplokjs-jqlite": "^1.0.1",
         "bplokjs-position": "^1.0.0",
         "classnames": "^2.2.6",
         "prop-types": "^15.6.2",
@@ -53,6 +55,7 @@
         "file-loader": "^2.0.0",
         "html-loader": "^0.5.5",
         "html-webpack-plugin": "^3.2.0",
+        "jquery": "^3.3.1",
         "json5-loader": "^1.0.1",
         "make-webpack-config": "^1.5.2",
         "mini-css-extract-plugin": "^0.4.3",

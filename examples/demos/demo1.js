@@ -1,6 +1,12 @@
 import React, { Component } from 'react';
 import Popup from '../../lib';
+import $ from 'jquery'
 import Deferred from 'bplokjs-deferred'
+
+function Test() {
+    console.log(1);
+    return null;
+}
 
 export default class DEMO extends Component {
 
@@ -23,10 +29,19 @@ export default class DEMO extends Component {
         });
     }
 
+    refButton2 = (dom) => {
+        this._defer2.resolve({
+            of: dom,
+            my: 'left center',
+            at: 'right center'
+        });
+    }
+
     _defer = Deferred()
+    _defer2 = Deferred()
 
     componentDidMount() {
-
+        //setInterval(this.forceUpdate.bind(this), 1000)
     }
 
     render() {
@@ -34,19 +49,36 @@ export default class DEMO extends Component {
 
         return (
             <div>
-                <button onClick={this.toggleClick}>显示</button>
+                <button onClick={this.toggleClick}>{visible ? '关闭' : '显示'}</button>
                 <Popup visible={visible} destroyOnHide={true}>
                     <div className="dialog">
-                        test...
+                        center...
                     </div>
                 </Popup>
                 <button onClick={this.toggleClick} ref={this.refButton}>trigger</button>
                 <Popup visible={visible} destroyOnHide={true} placement={this._defer}>
                     <div className="dialog">
-                        trigger...
+                        trigger1...
                     </div>
                 </Popup>
-            </div>
+                <button onClick={this.toggleClick} ref={this.refButton2}>animate</button>
+                <Popup
+                    visible={visible} placement={this._defer2}
+                    timeout={500}
+                    onEnter={node => {
+                        $(node).hide();
+                        $(node).stop().fadeIn(500)
+                    }}
+                    onExit={node => {
+                        $(node).stop().fadeOut(500)
+                    }}
+                >
+                    <div className="dialog">
+                        trigger2...
+                        <Test />
+                    </div>
+                </Popup>
+            </div >
         );
     }
 
