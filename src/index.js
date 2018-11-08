@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import position from 'bplokjs-position';
 import Transition from 'react-widget-transition/lib/Transition';
 import warning from 'warning';
-import Identity from './Identity';
+import Deferred from 'bplokjs-deferred'
 
 function noop() { }
 
@@ -20,7 +20,7 @@ const propTypes = {
     maskClassName: PropTypes.string,
     visible: PropTypes.bool,
     fixed: PropTypes.bool,
-    refreshPositionOnUpdate: PropTypes.bool,
+    resetPositionOnUpdate: PropTypes.bool,
     onMaskClick: PropTypes.func,
     onMaskMouseDown: PropTypes.func,
     rootComponent: PropTypes.any,
@@ -52,7 +52,7 @@ export default class Popup extends React.Component {
         mask: false,
         fixed: false,
         //禁用每次刷新更新位置
-        refreshPositionOnUpdate: false,
+        resetPositionOnUpdate: true,
         visible: true,
         addEndListener: noop,
         placement: {
@@ -62,9 +62,41 @@ export default class Popup extends React.Component {
 
     }
 
-    // static getDerivedStateFromProps(props, state) {
-    //     return {}
-    // }
+    /**
+     * onEnter onEntering onEntered在updatePosition执行
+     */
+    static getDerivedStateFromProps({ placement }, state) {
+
+        placement = isPromiseLike(placement) ? placement : Promise.resolve(placement)
+        let deferred = Deferred();
+        let promise = deferred.promise;
+
+        function start(cb) {
+            placement
+                .then(opts => {
+                    cb(opts);
+                    deferred.resolve();
+                })
+                .catch(e => {
+                    cb(null);
+                    deferred.resolve();
+                })
+        }
+
+        return {
+            start,
+            then: (cb) => {
+                return promise = promise.then(cb);
+            }
+        }
+    }
+
+    state = {
+        start: null,
+        then: null,
+    }
+
+    _hasSetPosition = false;
 
     getChildContext() {
         return { transitionGroup: null }
@@ -123,34 +155,39 @@ export default class Popup extends React.Component {
         }
     }
 
-    componentDidMount() {
-        const { placement, visible } = this.props;
+    updatePosition() {
+        const { visible, resetPositionOnUpdate } = this.props;
+        const { start } = this.state;
 
         if (visible) {
-            const pos = isPromiseLike(placement) ? placement : Promise.resolve(placement);
+            start(opts => {
+                if (opts == null) return;
 
-            pos.then(opts => {
-                const position = this.getPosition(opts);
-                this.setPosition(position.pos);
+                let shouldSetPosition = resetPositionOnUpdate ?
+                    true :
+                    this._hasSetPosition ?
+                        resetPositionOnUpdate :
+                        true;
+
+                if (shouldSetPosition) {
+                    const position = this.getPosition(opts);
+                    this.setPosition(position.pos);
+                    this._hasSetPosition = true;
+                }
+
             });
         }
     }
 
+    componentDidMount() {
+        this.updatePosition();
+    }
+
     componentDidUpdate() {
-        const { refreshPositionOnUpdate, visible } = this.props;
-        //if (visible && refreshPositionOnUpdate) {
-        this.componentDidMount();
-        //}
+        this.updatePosition();
     }
 
     componentWillUnmount() {
-    }
-
-
-    showPopup() {
-        if (!this.props.disabledSetPosition) {
-            this.setPosition();
-        }
     }
 
     handleMaskClick = (e) => {
@@ -207,15 +244,26 @@ export default class Popup extends React.Component {
             null;
     }
 
-    onTransitionChange(action, node, appearing) {
+    onTransitionChange(action, node) {
         const props = this.props;
         const pupupMaskDOM = this.getPopupMaskDOM();
 
         if (props[action]) {
             props[action](node, pupupMaskDOM);
         }
+    }
 
-        console.log(action)
+    onTransitionIn(action, node) {
+        const { then } = this.state;
+        const props = this.props;
+        const pupupMaskDOM = this.getPopupMaskDOM();
+
+        then(() => {
+            if (props[action]) {
+                props[action](node, pupupMaskDOM);
+            }
+            console.log(action)
+        });
     }
 
     renderPopup() {
@@ -250,9 +298,9 @@ export default class Popup extends React.Component {
 
                     in={visible}
 
-                    onEnter={this.onTransitionChange.bind(this, 'onEnter')}
-                    onEntering={this.onTransitionChange.bind(this, 'onEntering')}
-                    onEntered={this.onTransitionChange.bind(this, 'onEntered')}
+                    onEnter={this.onTransitionIn.bind(this, 'onEnter')}
+                    onEntering={this.onTransitionIn.bind(this, 'onEntering')}
+                    onEntered={this.onTransitionIn.bind(this, 'onEntered')}
 
                     onExit={this.onTransitionChange.bind(this, 'onExit')}
                     onExiting={this.onTransitionChange.bind(this, 'onExiting')}

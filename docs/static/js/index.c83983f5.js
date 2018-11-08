@@ -369,7 +369,8 @@ function (_Component) {
 
   (0, _createClass2.default)(DEMO, [{
     key: "componentDidMount",
-    value: function componentDidMount() {//setInterval(this.forceUpdate.bind(this), 1000)
+    value: function componentDidMount() {
+      setInterval(this.forceUpdate.bind(this), 1000);
     }
   }, {
     key: "render",
@@ -379,7 +380,8 @@ function (_Component) {
         onClick: this.toggleClick
       }, visible ? '关闭' : '显示'), _react.default.createElement(_lib.default, {
         visible: visible,
-        destroyOnHide: true
+        destroyOnHide: true,
+        resetPositionOnUpdate: true
       }, _react.default.createElement("div", {
         className: "dialog"
       }, "center...")), _react.default.createElement("button", {
@@ -454,63 +456,6 @@ _reactDom.default.render(_react.default.createElement(_Demo.default, null), demo
 
 /***/ }),
 
-/***/ "./lib/Identity.js":
-/*!*************************!*\
-  !*** ./lib/Identity.js ***!
-  \*************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "./node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "./node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
-
-var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "./node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
-
-var _possibleConstructorReturn2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime-corejs2/helpers/possibleConstructorReturn.js"));
-
-var _getPrototypeOf2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/getPrototypeOf */ "./node_modules/@babel/runtime-corejs2/helpers/getPrototypeOf.js"));
-
-var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "./node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
-
-var _react = _interopRequireDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-
-var Identity =
-/*#__PURE__*/
-function (_React$Component) {
-  (0, _inherits2.default)(Identity, _React$Component);
-
-  function Identity() {
-    (0, _classCallCheck2.default)(this, Identity);
-    return (0, _possibleConstructorReturn2.default)(this, (0, _getPrototypeOf2.default)(Identity).apply(this, arguments));
-  }
-
-  (0, _createClass2.default)(Identity, [{
-    key: "shouldComponentUpdate",
-    value: function shouldComponentUpdate(nextProps) {
-      return nextProps.shouldUpdate;
-    }
-  }, {
-    key: "render",
-    value: function render() {
-      return this.props.children;
-    }
-  }]);
-  return Identity;
-}(_react.default.Component);
-
-exports.default = Identity;
-
-/***/ }),
-
 /***/ "./lib/index.js":
 /*!**********************!*\
   !*** ./lib/index.js ***!
@@ -530,9 +475,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
-var _extends2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/extends */ "./node_modules/@babel/runtime-corejs2/helpers/extends.js"));
-
 var _promise = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/promise */ "./node_modules/@babel/runtime-corejs2/core-js/promise.js"));
+
+var _extends2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/extends */ "./node_modules/@babel/runtime-corejs2/helpers/extends.js"));
 
 var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "./node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
 
@@ -562,7 +507,7 @@ var _Transition = _interopRequireDefault(__webpack_require__(/*! react-widget-tr
 
 var _warning = _interopRequireDefault(__webpack_require__(/*! warning */ "./node_modules/warning/warning.js"));
 
-var _Identity = _interopRequireDefault(__webpack_require__(/*! ./Identity */ "./lib/Identity.js"));
+var _bplokjsDeferred = _interopRequireDefault(__webpack_require__(/*! bplokjs-deferred */ "./node_modules/bplokjs-deferred/index.js"));
 
 function noop() {}
 
@@ -577,7 +522,7 @@ var propTypes = {
   maskClassName: _propTypes.default.string,
   visible: _propTypes.default.bool,
   fixed: _propTypes.default.bool,
-  refreshPositionOnUpdate: _propTypes.default.bool,
+  resetPositionOnUpdate: _propTypes.default.bool,
   onMaskClick: _propTypes.default.func,
   onMaskMouseDown: _propTypes.default.func,
   rootComponent: _propTypes.default.any,
@@ -610,6 +555,11 @@ function (_React$Component) {
     }
 
     _this = (0, _possibleConstructorReturn2.default)(this, (_getPrototypeOf2 = (0, _getPrototypeOf3.default)(Popup)).call.apply(_getPrototypeOf2, [this].concat(args)));
+    (0, _defineProperty2.default)((0, _assertThisInitialized2.default)((0, _assertThisInitialized2.default)(_this)), "state", {
+      start: null,
+      then: null
+    });
+    (0, _defineProperty2.default)((0, _assertThisInitialized2.default)((0, _assertThisInitialized2.default)(_this)), "_hasSetPosition", false);
     (0, _defineProperty2.default)((0, _assertThisInitialized2.default)((0, _assertThisInitialized2.default)(_this)), "handleMaskClick", function (e) {
       var onMaskClick = _this.props.onMaskClick;
 
@@ -705,42 +655,43 @@ function (_React$Component) {
       }
     }
   }, {
-    key: "componentDidMount",
-    value: function componentDidMount() {
+    key: "updatePosition",
+    value: function updatePosition() {
       var _this2 = this;
 
       var _this$props = this.props,
-          placement = _this$props.placement,
-          visible = _this$props.visible;
+          visible = _this$props.visible,
+          resetPositionOnUpdate = _this$props.resetPositionOnUpdate;
+      var start = this.state.start;
 
       if (visible) {
-        var pos = isPromiseLike(placement) ? placement : _promise.default.resolve(placement);
-        pos.then(function (opts) {
-          var position = _this2.getPosition(opts);
+        start(function (opts) {
+          if (opts == null) return;
+          var shouldSetPosition = resetPositionOnUpdate ? true : _this2._hasSetPosition ? resetPositionOnUpdate : true;
 
-          _this2.setPosition(position.pos);
+          if (shouldSetPosition) {
+            var _position = _this2.getPosition(opts);
+
+            _this2.setPosition(_position.pos);
+
+            _this2._hasSetPosition = true;
+          }
         });
       }
     }
   }, {
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      this.updatePosition();
+    }
+  }, {
     key: "componentDidUpdate",
     value: function componentDidUpdate() {
-      var _this$props2 = this.props,
-          refreshPositionOnUpdate = _this$props2.refreshPositionOnUpdate,
-          visible = _this$props2.visible; //if (visible && refreshPositionOnUpdate) {
-
-      this.componentDidMount(); //}
+      this.updatePosition();
     }
   }, {
     key: "componentWillUnmount",
     value: function componentWillUnmount() {}
-  }, {
-    key: "showPopup",
-    value: function showPopup() {
-      if (!this.props.disabledSetPosition) {
-        this.setPosition();
-      }
-    }
   }, {
     key: "getRootDOM",
     value: function getRootDOM() {
@@ -761,12 +712,12 @@ function (_React$Component) {
     value: function renderPopupMask() {
       var _classNames;
 
-      var _this$props3 = this.props,
-          prefixCls = _this$props3.prefixCls,
-          mask = _this$props3.mask,
-          maskClassName = _this$props3.maskClassName,
-          popupMaskProps = _this$props3.popupMaskProps,
-          fixed = _this$props3.fixed;
+      var _this$props2 = this.props,
+          prefixCls = _this$props2.prefixCls,
+          mask = _this$props2.mask,
+          maskClassName = _this$props2.maskClassName,
+          popupMaskProps = _this$props2.popupMaskProps,
+          fixed = _this$props2.fixed;
       var classes = (0, _classnames.default)((_classNames = {}, (0, _defineProperty2.default)(_classNames, "".concat(prefixCls, "-mask"), true), (0, _defineProperty2.default)(_classNames, "".concat(prefixCls, "-mask-fixed"), fixed), (0, _defineProperty2.default)(_classNames, maskClassName, maskClassName), _classNames));
       return mask ? _react.default.createElement("div", (0, _extends2.default)({
         onMouseDown: this.handleMaskMouseDown,
@@ -778,31 +729,43 @@ function (_React$Component) {
     }
   }, {
     key: "onTransitionChange",
-    value: function onTransitionChange(action, node, appearing) {
+    value: function onTransitionChange(action, node) {
       var props = this.props;
       var pupupMaskDOM = this.getPopupMaskDOM();
 
       if (props[action]) {
         props[action](node, pupupMaskDOM);
       }
+    }
+  }, {
+    key: "onTransitionIn",
+    value: function onTransitionIn(action, node) {
+      var then = this.state.then;
+      var props = this.props;
+      var pupupMaskDOM = this.getPopupMaskDOM();
+      then(function () {
+        if (props[action]) {
+          props[action](node, pupupMaskDOM);
+        }
 
-      console.log(action);
+        console.log(action);
+      });
     }
   }, {
     key: "renderPopup",
     value: function renderPopup() {
-      var _this$props4 = this.props,
-          prefixCls = _this$props4.prefixCls,
-          className = _this$props4.className,
-          fixed = _this$props4.fixed,
-          style = _this$props4.style,
-          popupProps = _this$props4.popupProps,
-          children = _this$props4.children,
-          visible = _this$props4.visible,
-          timeout = _this$props4.timeout,
-          addEndListener = _this$props4.addEndListener,
-          RootComponent = _this$props4.rootComponent,
-          PopupComponent = _this$props4.popupComponent;
+      var _this$props3 = this.props,
+          prefixCls = _this$props3.prefixCls,
+          className = _this$props3.className,
+          fixed = _this$props3.fixed,
+          style = _this$props3.style,
+          popupProps = _this$props3.popupProps,
+          children = _this$props3.children,
+          visible = _this$props3.visible,
+          timeout = _this$props3.timeout,
+          addEndListener = _this$props3.addEndListener,
+          RootComponent = _this$props3.rootComponent,
+          PopupComponent = _this$props3.popupComponent;
       var classes = (0, _classnames.default)(prefixCls, fixed ? prefixCls + '-fixed' : '', className);
       (0, _warning.default)(PopupComponent !== _react.Fragment, "popupComponent receive a Fragment Component!");
       return _react.default.createElement(RootComponent, null, this.renderPopupMask(), _react.default.createElement(_Transition.default, {
@@ -811,9 +774,9 @@ function (_React$Component) {
           return cb();
         } : addEndListener,
         in: visible,
-        onEnter: this.onTransitionChange.bind(this, 'onEnter'),
-        onEntering: this.onTransitionChange.bind(this, 'onEntering'),
-        onEntered: this.onTransitionChange.bind(this, 'onEntered'),
+        onEnter: this.onTransitionIn.bind(this, 'onEnter'),
+        onEntering: this.onTransitionIn.bind(this, 'onEntering'),
+        onEntered: this.onTransitionIn.bind(this, 'onEntered'),
         onExit: this.onTransitionChange.bind(this, 'onExit'),
         onExiting: this.onTransitionChange.bind(this, 'onExiting'),
         onExited: this.onTransitionChange.bind(this, 'onExited'),
@@ -835,6 +798,31 @@ function (_React$Component) {
     value: function render() {
       return this.renderPopup();
     }
+  }], [{
+    key: "getDerivedStateFromProps",
+    value: function getDerivedStateFromProps(_ref, state) {
+      var placement = _ref.placement;
+      placement = isPromiseLike(placement) ? placement : _promise.default.resolve(placement);
+      var deferred = (0, _bplokjsDeferred.default)();
+      var promise = deferred.promise;
+
+      function start(cb) {
+        placement.then(function (opts) {
+          cb(opts);
+          deferred.resolve();
+        }).catch(function (e) {
+          cb(null);
+          deferred.resolve();
+        });
+      }
+
+      return {
+        start: start,
+        then: function then(cb) {
+          return promise = promise.then(cb);
+        }
+      };
+    }
   }]);
   return Popup;
 }(_react.default.Component);
@@ -851,15 +839,16 @@ exports.default = Popup;
   mask: false,
   fixed: false,
   //禁用每次刷新更新位置
-  refreshPositionOnUpdate: false,
+  resetPositionOnUpdate: true,
   visible: true,
   addEndListener: noop,
   placement: {
     of: window,
     collision: 'flip' // none flip fit flipfit
-    // static getDerivedStateFromProps(props, state) {
-    //     return {}
-    // }
+
+    /**
+     * onEnter onEntering onEntered在updatePosition执行
+     */
 
   }
 });
@@ -884,12 +873,12 @@ exports.default = Popup;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! D:\wamp\www\github-projects\react-widget\popup\node_modules\packez\lib\fetchPolyfills.js */"./node_modules/packez/lib/fetchPolyfills.js");
-__webpack_require__(/*! D:\wamp\www\github-projects\react-widget\popup\node_modules\packez\lib\polyfills.js */"./node_modules/packez/lib/polyfills.js");
-module.exports = __webpack_require__(/*! D:\wamp\www\github-projects\react-widget\popup\examples\index.js */"./examples/index.js");
+__webpack_require__(/*! D:\wamp64\www\github-project\react-widget\popup\node_modules\packez\lib\fetchPolyfills.js */"./node_modules/packez/lib/fetchPolyfills.js");
+__webpack_require__(/*! D:\wamp64\www\github-project\react-widget\popup\node_modules\packez\lib\polyfills.js */"./node_modules/packez/lib/polyfills.js");
+module.exports = __webpack_require__(/*! D:\wamp64\www\github-project\react-widget\popup\examples\index.js */"./examples/index.js");
 
 
 /***/ })
 
 /******/ });
-//# sourceMappingURL=index.40cf6a7c.js.map
+//# sourceMappingURL=index.c83983f5.js.map

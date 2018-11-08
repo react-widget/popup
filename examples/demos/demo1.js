@@ -41,7 +41,7 @@ export default class DEMO extends Component {
     _defer2 = Deferred()
 
     componentDidMount() {
-        //setInterval(this.forceUpdate.bind(this), 1000)
+        setInterval(this.forceUpdate.bind(this), 1000)
     }
 
     render() {
@@ -50,7 +50,7 @@ export default class DEMO extends Component {
         return (
             <div>
                 <button onClick={this.toggleClick}>{visible ? '关闭' : '显示'}</button>
-                <Popup visible={visible} destroyOnHide={true}>
+                <Popup visible={visible} destroyOnHide={true} resetPositionOnUpdate>
                     <div className="dialog">
                         center...
                     </div>
