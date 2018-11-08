@@ -17,6 +17,7 @@
 .content {
   overflow: auto;
   padding: 10px;
+  border: 1px solid #F2F2F2;
   -ms-flex: 1 1;
       flex: 1 1; }
 
@@ -62,4 +63,4 @@
   opacity: 0.1; }
 
 
-/*# sourceMappingURL=index.86c6a3dc.css.map*/
+/*# sourceMappingURL=index.286d59be.css.map*/

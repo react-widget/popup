@@ -376,11 +376,17 @@ function (_Component) {
     key: "render",
     value: function render() {
       var visible = this.state.visible;
-      return _react.default.createElement("div", null, _react.default.createElement("button", {
+      var defer = (0, _bplokjsDeferred.default)();
+      return _react.default.createElement("div", {
+        ref: function ref(dom) {
+          return dom && defer.resolve({
+            of: dom.parentElement
+          });
+        }
+      }, _react.default.createElement("button", {
         onClick: this.toggleClick
       }, visible ? '关闭' : '显示'), _react.default.createElement(_lib.default, {
         visible: visible,
-        destroyOnHide: true,
         resetPositionOnUpdate: true
       }, _react.default.createElement("div", {
         className: "dialog"
@@ -389,7 +395,6 @@ function (_Component) {
         ref: this.refButton
       }, "trigger"), _react.default.createElement(_lib.default, {
         visible: visible,
-        destroyOnHide: true,
         placement: this._defer
       }, _react.default.createElement("div", {
         className: "dialog"
@@ -406,10 +411,24 @@ function (_Component) {
         },
         onExit: function onExit(node) {
           (0, _jquery.default)(node).stop().fadeOut(500);
+        },
+        style: {
+          border: "5px solid #ccc"
+        },
+        onClick: function onClick() {
+          return alert('you clicked!');
         }
       }, _react.default.createElement("div", {
         className: "dialog"
-      }, "trigger2...", _react.default.createElement(Test, null))));
+      }, "trigger2...", _react.default.createElement(Test, null))), _react.default.createElement(_lib.default, {
+        visible: visible,
+        resetPositionOnUpdate: true,
+        style: {
+          background: '#ccc',
+          padding: 10
+        },
+        placement: defer
+      }, _react.default.createElement("div", null, "center2...")));
     }
   }]);
   return DEMO;
@@ -477,6 +496,10 @@ exports.default = void 0;
 
 var _promise = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/promise */ "./node_modules/@babel/runtime-corejs2/core-js/promise.js"));
 
+var _keys = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/object/keys */ "./node_modules/@babel/runtime-corejs2/core-js/object/keys.js"));
+
+var _objectWithoutProperties2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/objectWithoutProperties */ "./node_modules/@babel/runtime-corejs2/helpers/objectWithoutProperties.js"));
+
 var _extends2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/extends */ "./node_modules/@babel/runtime-corejs2/helpers/extends.js"));
 
 var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "./node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
@@ -507,6 +530,8 @@ var _Transition = _interopRequireDefault(__webpack_require__(/*! react-widget-tr
 
 var _warning = _interopRequireDefault(__webpack_require__(/*! warning */ "./node_modules/warning/warning.js"));
 
+var _object = _interopRequireDefault(__webpack_require__(/*! object.omit */ "./node_modules/object.omit/index.js"));
+
 var _bplokjsDeferred = _interopRequireDefault(__webpack_require__(/*! bplokjs-deferred */ "./node_modules/bplokjs-deferred/index.js"));
 
 function noop() {}
@@ -523,19 +548,21 @@ var propTypes = {
   visible: _propTypes.default.bool,
   fixed: _propTypes.default.bool,
   resetPositionOnUpdate: _propTypes.default.bool,
-  onMaskClick: _propTypes.default.func,
-  onMaskMouseDown: _propTypes.default.func,
   rootComponent: _propTypes.default.any,
   popupComponent: _propTypes.default.any,
-  rootProps: _propTypes.default.object,
-  popupProps: _propTypes.default.object,
-  popupMaskProps: _propTypes.default.object,
-  addEndListener: _propTypes.default.func,
+  maskProps: _propTypes.default.object,
+  onMaskClick: _propTypes.default.func,
+  onMaskMouseDown: _propTypes.default.func,
+  placement: _propTypes.default.any,
+  //translaton
   timeout: _propTypes.default.any,
+  addEndListener: _propTypes.default.func,
+  onEnter: _propTypes.default.func,
+  onEntering: _propTypes.default.func,
   onEntered: _propTypes.default.func,
-  onExited: _propTypes.default.func,
-  mountOnEnter: _propTypes.default.bool,
-  placement: _propTypes.default.any
+  onExit: _propTypes.default.func,
+  onExiting: _propTypes.default.func,
+  onExited: _propTypes.default.func
 };
 
 var Popup =
@@ -601,6 +628,11 @@ function (_React$Component) {
           collision = opts.collision,
           _using = opts.using,
           within = opts.within;
+
+      if (typeof of === 'function') {
+        of = of(popup);
+      }
+
       var config = {
         of: of,
         using: function using(pos, feedback) {
@@ -639,19 +671,19 @@ function (_React$Component) {
       var popup = this.getPopupDOM();
 
       if ('left' in pos) {
-        popup.style.left = pos.left + 'px';
+        popup.style.left = ~~pos.left + 'px';
       }
 
       if ('top' in pos) {
-        popup.style.top = pos.top + 'px';
+        popup.style.top = ~~pos.top + 'px';
       }
 
       if ('right' in pos) {
-        popup.style.right = pos.right + 'px';
+        popup.style.right = ~~pos.right + 'px';
       }
 
       if ('bottom' in pos) {
-        popup.style.bottom = pos.bottom + 'px';
+        popup.style.bottom = ~~pos.bottom + 'px';
       }
     }
   }, {
@@ -747,26 +779,25 @@ function (_React$Component) {
         if (props[action]) {
           props[action](node, pupupMaskDOM);
         }
-
-        console.log(action);
       });
     }
   }, {
     key: "renderPopup",
     value: function renderPopup() {
+      var _classNames2;
+
       var _this$props3 = this.props,
           prefixCls = _this$props3.prefixCls,
           className = _this$props3.className,
           fixed = _this$props3.fixed,
-          style = _this$props3.style,
-          popupProps = _this$props3.popupProps,
           children = _this$props3.children,
           visible = _this$props3.visible,
           timeout = _this$props3.timeout,
           addEndListener = _this$props3.addEndListener,
           RootComponent = _this$props3.rootComponent,
-          PopupComponent = _this$props3.popupComponent;
-      var classes = (0, _classnames.default)(prefixCls, fixed ? prefixCls + '-fixed' : '', className);
+          PopupComponent = _this$props3.popupComponent,
+          others = (0, _objectWithoutProperties2.default)(_this$props3, ["prefixCls", "className", "fixed", "children", "visible", "timeout", "addEndListener", "rootComponent", "popupComponent"]);
+      var cls = (0, _classnames.default)((_classNames2 = {}, (0, _defineProperty2.default)(_classNames2, prefixCls, true), (0, _defineProperty2.default)(_classNames2, "".concat(prefixCls, "-fixed"), fixed), (0, _defineProperty2.default)(_classNames2, className, className), _classNames2));
       (0, _warning.default)(PopupComponent !== _react.Fragment, "popupComponent receive a Fragment Component!");
       return _react.default.createElement(RootComponent, null, this.renderPopupMask(), _react.default.createElement(_Transition.default, {
         timeout: timeout,
@@ -786,11 +817,10 @@ function (_React$Component) {
         exit: true,
         appear: true
       }, _react.default.createElement(PopupComponent, (0, _extends2.default)({
-        tabIndex: -1,
-        style: style
-      }, popupProps, {
+        tabIndex: -1
+      }, (0, _object.default)(others, (0, _keys.default)(propTypes)), {
         ref: this.refPopup,
-        className: classes
+        className: cls
       }), children)));
     }
   }, {
@@ -873,12 +903,12 @@ exports.default = Popup;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! D:\wamp64\www\github-project\react-widget\popup\node_modules\packez\lib\fetchPolyfills.js */"./node_modules/packez/lib/fetchPolyfills.js");
-__webpack_require__(/*! D:\wamp64\www\github-project\react-widget\popup\node_modules\packez\lib\polyfills.js */"./node_modules/packez/lib/polyfills.js");
-module.exports = __webpack_require__(/*! D:\wamp64\www\github-project\react-widget\popup\examples\index.js */"./examples/index.js");
+__webpack_require__(/*! D:\wamp\www\github-projects\react-widget\popup\node_modules\packez\lib\fetchPolyfills.js */"./node_modules/packez/lib/fetchPolyfills.js");
+__webpack_require__(/*! D:\wamp\www\github-projects\react-widget\popup\node_modules\packez\lib\polyfills.js */"./node_modules/packez/lib/polyfills.js");
+module.exports = __webpack_require__(/*! D:\wamp\www\github-projects\react-widget\popup\examples\index.js */"./examples/index.js");
 
 
 /***/ })
 
 /******/ });
-//# sourceMappingURL=index.c83983f5.js.map
+//# sourceMappingURL=index.0becae85.js.map

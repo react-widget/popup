@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import position from 'bplokjs-position';
 import Transition from 'react-widget-transition/lib/Transition';
 import warning from 'warning';
+import omit from 'object.omit';
 import Deferred from 'bplokjs-deferred'
 
 function noop() { }
@@ -21,21 +22,25 @@ const propTypes = {
     visible: PropTypes.bool,
     fixed: PropTypes.bool,
     resetPositionOnUpdate: PropTypes.bool,
-    onMaskClick: PropTypes.func,
-    onMaskMouseDown: PropTypes.func,
     rootComponent: PropTypes.any,
     popupComponent: PropTypes.any,
-    rootProps: PropTypes.object,
-    popupProps: PropTypes.object,
-    popupMaskProps: PropTypes.object,
 
-    addEndListener: PropTypes.func,
-    timeout: PropTypes.any,
+    maskProps: PropTypes.object,
 
-    onEntered: PropTypes.func,
-    onExited: PropTypes.func,
-    mountOnEnter: PropTypes.bool,
+    onMaskClick: PropTypes.func,
+    onMaskMouseDown: PropTypes.func,
+
+
     placement: PropTypes.any,
+    //translaton
+    timeout: PropTypes.any,
+    addEndListener: PropTypes.func,
+    onEnter: PropTypes.func,
+    onEntering: PropTypes.func,
+    onEntered: PropTypes.func,
+    onExit: PropTypes.func,
+    onExiting: PropTypes.func,
+    onExited: PropTypes.func,
 };
 
 export default class Popup extends React.Component {
@@ -108,6 +113,10 @@ export default class Popup extends React.Component {
 
         let { of, my, at, collision, using, within } = opts;
 
+        if (typeof of === 'function') {
+            of = of(popup);
+        }
+
         const config = {
             of,
             using: function (pos, feedback) {
@@ -142,16 +151,16 @@ export default class Popup extends React.Component {
         const popup = this.getPopupDOM();
 
         if ('left' in pos) {
-            popup.style.left = pos.left + 'px';
+            popup.style.left = ~~pos.left + 'px';
         }
         if ('top' in pos) {
-            popup.style.top = pos.top + 'px';
+            popup.style.top = ~~pos.top + 'px';
         }
         if ('right' in pos) {
-            popup.style.right = pos.right + 'px';
+            popup.style.right = ~~pos.right + 'px';
         }
         if ('bottom' in pos) {
-            popup.style.bottom = pos.bottom + 'px';
+            popup.style.bottom = ~~pos.bottom + 'px';
         }
     }
 
@@ -187,8 +196,7 @@ export default class Popup extends React.Component {
         this.updatePosition();
     }
 
-    componentWillUnmount() {
-    }
+    componentWillUnmount() { }
 
     handleMaskClick = (e) => {
         const { onMaskClick } = this.props;
@@ -262,7 +270,6 @@ export default class Popup extends React.Component {
             if (props[action]) {
                 props[action](node, pupupMaskDOM);
             }
-            console.log(action)
         });
     }
 
@@ -271,17 +278,20 @@ export default class Popup extends React.Component {
             prefixCls,
             className,
             fixed,
-            style,
-            popupProps,
             children,
             visible,
             timeout,
             addEndListener,
             rootComponent: RootComponent,
-            popupComponent: PopupComponent
+            popupComponent: PopupComponent,
+            ...others
         } = this.props;
 
-        const classes = classNames(prefixCls, fixed ? prefixCls + '-fixed' : '', className);
+        const cls = classNames({
+            [prefixCls]: true,
+            [`${prefixCls}-fixed`]: fixed,
+            [className]: className
+        });
 
         warning(PopupComponent !== Fragment, `popupComponent receive a Fragment Component!`);
 
@@ -314,10 +324,9 @@ export default class Popup extends React.Component {
                 >
                     <PopupComponent
                         tabIndex={-1}
-                        style={style}
-                        {...popupProps}
+                        {...omit(others, Object.keys(propTypes))}
                         ref={this.refPopup}
-                        className={classes}
+                        className={cls}
                     >
                         {children}
                     </PopupComponent>
