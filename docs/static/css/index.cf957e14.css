@@ -1,0 +1,65 @@
+.container {
+  display: -ms-flexbox;
+  display: flex;
+  height: 100%; }
+
+.slider {
+  width: 200px;
+  border-right: 1px solid #f2f2fe; }
+  .slider > div {
+    padding: 10px;
+    border-bottom: 1px solid #f2f2fe;
+    cursor: pointer; }
+  .slider .active {
+    background: #3399ff;
+    color: #FFF; }
+
+.content {
+  overflow: auto;
+  padding: 10px;
+  -ms-flex: 1 1;
+      flex: 1 1; }
+
+.table-tree {
+  border-collapse: collapse; }
+  .table-tree tbody tr:hover {
+    background-color: #efefef; }
+  .table-tree td {
+    border-bottom: 1px solid #F2F2F2; }
+
+.dialog {
+  width: 150px;
+  height: 150px;
+  border: 1px solid #000;
+  text-align: center;
+  background: #efefef; }
+
+
+.rw-popup-root {
+  /*position:absolute;
+	left:0;
+	top:0;
+	right:0;*/ }
+
+.rw-popup {
+  position: absolute;
+  left: 0;
+  top: 0;
+  outline: 0; }
+
+.rw-popup-fixed {
+  position: fixed; }
+  .rw-popup-fixed + .nex-popup-mask {
+    position: fixed; }
+
+.rw-popup-mask {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background: #000;
+  opacity: 0.1; }
+
+
+/*# sourceMappingURL=index.cf957e14.css.map*/
