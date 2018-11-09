@@ -267,11 +267,169 @@ exports.default = void 0;
 
 var _demo = _interopRequireDefault(__webpack_require__(/*! ./demos/demo1 */ "./examples/demos/demo1.js"));
 
+var _Demo = _interopRequireDefault(__webpack_require__(/*! ./demos/Demo2 */ "./examples/demos/Demo2.js"));
+
 var _default = [{
   label: '基本功能',
   component: _demo.default
+}, {
+  label: '遮罩层',
+  component: _Demo.default
 }];
 exports.default = _default;
+
+/***/ }),
+
+/***/ "./examples/demos/Demo2.js":
+/*!*********************************!*\
+  !*** ./examples/demos/Demo2.js ***!
+  \*********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireWildcard */ "./node_modules/@babel/runtime-corejs2/helpers/interopRequireWildcard.js");
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "./node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "./node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
+
+var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "./node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
+
+var _possibleConstructorReturn2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime-corejs2/helpers/possibleConstructorReturn.js"));
+
+var _getPrototypeOf3 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/getPrototypeOf */ "./node_modules/@babel/runtime-corejs2/helpers/getPrototypeOf.js"));
+
+var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "./node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
+
+var _assertThisInitialized2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/assertThisInitialized */ "./node_modules/@babel/runtime-corejs2/helpers/assertThisInitialized.js"));
+
+var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/defineProperty */ "./node_modules/@babel/runtime-corejs2/helpers/defineProperty.js"));
+
+var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var _lib = _interopRequireDefault(__webpack_require__(/*! ../../lib */ "./lib/index.js"));
+
+var _jquery = _interopRequireDefault(__webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js"));
+
+var _bplokjsDeferred = _interopRequireDefault(__webpack_require__(/*! bplokjs-deferred */ "./node_modules/bplokjs-deferred/index.js"));
+
+function Test() {
+  console.log(1);
+  return null;
+}
+
+var DEMO =
+/*#__PURE__*/
+function (_Component) {
+  (0, _inherits2.default)(DEMO, _Component);
+
+  function DEMO() {
+    var _getPrototypeOf2;
+
+    var _this;
+
+    (0, _classCallCheck2.default)(this, DEMO);
+
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    _this = (0, _possibleConstructorReturn2.default)(this, (_getPrototypeOf2 = (0, _getPrototypeOf3.default)(DEMO)).call.apply(_getPrototypeOf2, [this].concat(args)));
+    (0, _defineProperty2.default)((0, _assertThisInitialized2.default)((0, _assertThisInitialized2.default)(_this)), "state", {
+      visible: true,
+      mask: true
+    });
+    (0, _defineProperty2.default)((0, _assertThisInitialized2.default)((0, _assertThisInitialized2.default)(_this)), "toggleClick", function (e) {
+      var visible = _this.state.visible;
+
+      _this.setState({
+        visible: !visible
+      });
+    });
+    (0, _defineProperty2.default)((0, _assertThisInitialized2.default)((0, _assertThisInitialized2.default)(_this)), "toggleClick2", function (e) {
+      var mask = _this.state.mask;
+
+      _this.setState({
+        mask: !mask
+      });
+    });
+    (0, _defineProperty2.default)((0, _assertThisInitialized2.default)((0, _assertThisInitialized2.default)(_this)), "refButton", function (dom) {
+      _this._defer.resolve({
+        of: dom,
+        my: 'left top',
+        at: 'left bottom'
+      });
+    });
+    (0, _defineProperty2.default)((0, _assertThisInitialized2.default)((0, _assertThisInitialized2.default)(_this)), "refButton2", function (dom) {
+      _this._defer2.resolve({
+        of: dom,
+        my: 'left center',
+        at: 'right center'
+      });
+    });
+    return _this;
+  }
+
+  (0, _createClass2.default)(DEMO, [{
+    key: "render",
+    value: function render() {
+      var _this$state = this.state,
+          visible = _this$state.visible,
+          mask = _this$state.mask;
+      return _react.default.createElement(_react.Fragment, null, _react.default.createElement("div", null, _react.default.createElement("button", {
+        onClick: this.toggleClick
+      }, visible ? '关闭' : '显示'), _react.default.createElement("button", {
+        onClick: this.toggleClick2
+      }, mask ? '关闭遮罩层' : '显示遮罩层')), _react.default.createElement("div", {
+        style: {
+          height: "calc(100% - 30px)",
+          position: "relative",
+          border: "1px solid #000"
+        }
+      }, _react.default.createElement(_lib.default, {
+        visible: visible,
+        mask: mask,
+        resetPositionOnUpdate: true,
+        style: {
+          background: '#ff5454',
+          color: '#FFF',
+          padding: 10
+        },
+        timeout: 500,
+        onEnter: function onEnter(node) {
+          (0, _jquery.default)(node).hide();
+          (0, _jquery.default)(node).stop().fadeIn(500);
+        },
+        onExit: function onExit(node) {
+          (0, _jquery.default)(node).stop().fadeOut(500);
+        },
+        onMaskEnter: function onMaskEnter(node) {
+          (0, _jquery.default)(node).hide();
+          (0, _jquery.default)(node).stop().fadeIn(500);
+        },
+        onMaskExit: function onMaskExit(node) {
+          (0, _jquery.default)(node).stop().fadeOut(500);
+        },
+        placement: {
+          of: function of(el) {
+            return el.parentElement;
+          }
+        }
+      }, _react.default.createElement("div", null, "center2..."))));
+    }
+  }]);
+  return DEMO;
+}(_react.Component);
+
+exports.default = DEMO;
 
 /***/ }),
 
@@ -544,25 +702,30 @@ var propTypes = {
   prefixCls: _propTypes.default.string,
   className: _propTypes.default.string,
   mask: _propTypes.default.bool,
-  maskClassName: _propTypes.default.string,
   visible: _propTypes.default.bool,
   fixed: _propTypes.default.bool,
   resetPositionOnUpdate: _propTypes.default.bool,
   rootComponent: _propTypes.default.any,
   popupComponent: _propTypes.default.any,
+  maskComponent: _propTypes.default.any,
   maskProps: _propTypes.default.object,
-  onMaskClick: _propTypes.default.func,
-  onMaskMouseDown: _propTypes.default.func,
   placement: _propTypes.default.any,
   //translaton
   timeout: _propTypes.default.any,
   addEndListener: _propTypes.default.func,
+  addMaskEndListener: _propTypes.default.func,
   onEnter: _propTypes.default.func,
   onEntering: _propTypes.default.func,
   onEntered: _propTypes.default.func,
   onExit: _propTypes.default.func,
   onExiting: _propTypes.default.func,
-  onExited: _propTypes.default.func
+  onExited: _propTypes.default.func,
+  onMaskEnter: _propTypes.default.func,
+  onMaskEntering: _propTypes.default.func,
+  onMaskEntered: _propTypes.default.func,
+  onMaskExit: _propTypes.default.func,
+  onMaskExiting: _propTypes.default.func,
+  onMaskExited: _propTypes.default.func
 };
 
 var Popup =
@@ -740,33 +903,12 @@ function (_React$Component) {
       return this._popupMaskRef ? _reactDom.default.findDOMNode(this._popupMaskRef) : null;
     }
   }, {
-    key: "renderPopupMask",
-    value: function renderPopupMask() {
-      var _classNames;
-
-      var _this$props2 = this.props,
-          prefixCls = _this$props2.prefixCls,
-          mask = _this$props2.mask,
-          maskClassName = _this$props2.maskClassName,
-          popupMaskProps = _this$props2.popupMaskProps,
-          fixed = _this$props2.fixed;
-      var classes = (0, _classnames.default)((_classNames = {}, (0, _defineProperty2.default)(_classNames, "".concat(prefixCls, "-mask"), true), (0, _defineProperty2.default)(_classNames, "".concat(prefixCls, "-mask-fixed"), fixed), (0, _defineProperty2.default)(_classNames, maskClassName, maskClassName), _classNames));
-      return mask ? _react.default.createElement("div", (0, _extends2.default)({
-        onMouseDown: this.handleMaskMouseDown,
-        onClick: this.handleMaskClick
-      }, popupMaskProps, {
-        ref: this.refPopupMask,
-        className: classes
-      })) : null;
-    }
-  }, {
     key: "onTransitionChange",
     value: function onTransitionChange(action, node) {
       var props = this.props;
-      var pupupMaskDOM = this.getPopupMaskDOM();
 
       if (props[action]) {
-        props[action](node, pupupMaskDOM);
+        props[action](node);
       }
     }
   }, {
@@ -774,12 +916,49 @@ function (_React$Component) {
     value: function onTransitionIn(action, node) {
       var then = this.state.then;
       var props = this.props;
-      var pupupMaskDOM = this.getPopupMaskDOM();
       then(function () {
         if (props[action]) {
-          props[action](node, pupupMaskDOM);
+          props[action](node);
         }
       });
+    }
+  }, {
+    key: "renderPopupMask",
+    value: function renderPopupMask() {
+      var _classNames;
+
+      var _this$props2 = this.props,
+          prefixCls = _this$props2.prefixCls,
+          mask = _this$props2.mask,
+          visible = _this$props2.visible,
+          _this$props2$maskProp = _this$props2.maskProps,
+          maskProps = _this$props2$maskProp === void 0 ? {} : _this$props2$maskProp,
+          fixed = _this$props2.fixed,
+          timeout = _this$props2.timeout,
+          addMaskEndListener = _this$props2.addMaskEndListener,
+          MaskComponent = _this$props2.maskComponent;
+      var cls = (0, _classnames.default)((_classNames = {}, (0, _defineProperty2.default)(_classNames, "".concat(prefixCls, "-mask"), true), (0, _defineProperty2.default)(_classNames, "".concat(prefixCls, "-mask-fixed"), fixed), (0, _defineProperty2.default)(_classNames, maskProps.className, maskProps.className), _classNames));
+      return _react.default.createElement(_Transition.default, {
+        timeout: timeout,
+        addEndListener: timeout == null && addMaskEndListener === noop ? function (node, cb) {
+          return cb();
+        } : addMaskEndListener,
+        in: mask && visible,
+        onEnter: this.onTransitionIn.bind(this, 'onMaskEnter'),
+        onEntering: this.onTransitionIn.bind(this, 'onMaskEntering'),
+        onEntered: this.onTransitionIn.bind(this, 'onMaskEntered'),
+        onExit: this.onTransitionChange.bind(this, 'onMaskExit'),
+        onExiting: this.onTransitionChange.bind(this, 'onMaskExiting'),
+        onExited: this.onTransitionChange.bind(this, 'onMaskExited'),
+        unmountOnExit: true,
+        mountOnEnter: true,
+        enter: true,
+        exit: true,
+        appear: true
+      }, _react.default.createElement(MaskComponent, (0, _extends2.default)({}, maskProps, {
+        ref: this.refPopupMask,
+        className: cls
+      })));
     }
   }, {
     key: "renderPopup",
@@ -866,12 +1045,14 @@ exports.default = Popup;
   prefixCls: 'rw-popup',
   rootComponent: _react.default.Fragment,
   popupComponent: 'div',
+  maskComponent: 'div',
   mask: false,
   fixed: false,
   //禁用每次刷新更新位置
   resetPositionOnUpdate: true,
   visible: true,
   addEndListener: noop,
+  addMaskEndListener: noop,
   placement: {
     of: window,
     collision: 'flip' // none flip fit flipfit
@@ -903,12 +1084,12 @@ exports.default = Popup;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! D:\wamp64\www\github-project\react-widget\popup\node_modules\packez\lib\fetchPolyfills.js */"./node_modules/packez/lib/fetchPolyfills.js");
-__webpack_require__(/*! D:\wamp64\www\github-project\react-widget\popup\node_modules\packez\lib\polyfills.js */"./node_modules/packez/lib/polyfills.js");
-module.exports = __webpack_require__(/*! D:\wamp64\www\github-project\react-widget\popup\examples\index.js */"./examples/index.js");
+__webpack_require__(/*! D:\wamp\www\github-projects\react-widget\popup\node_modules\packez\lib\fetchPolyfills.js */"./node_modules/packez/lib/fetchPolyfills.js");
+__webpack_require__(/*! D:\wamp\www\github-projects\react-widget\popup\node_modules\packez\lib\polyfills.js */"./node_modules/packez/lib/polyfills.js");
+module.exports = __webpack_require__(/*! D:\wamp\www\github-projects\react-widget\popup\examples\index.js */"./examples/index.js");
 
 
 /***/ })
 
 /******/ });
-//# sourceMappingURL=index.1818b176.js.map
+//# sourceMappingURL=index.ad4d238d.js.map

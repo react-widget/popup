@@ -18,29 +18,33 @@ const propTypes = {
     prefixCls: PropTypes.string,
     className: PropTypes.string,
     mask: PropTypes.bool,
-    maskClassName: PropTypes.string,
     visible: PropTypes.bool,
     fixed: PropTypes.bool,
     resetPositionOnUpdate: PropTypes.bool,
+
     rootComponent: PropTypes.any,
     popupComponent: PropTypes.any,
-
+    maskComponent: PropTypes.any,
     maskProps: PropTypes.object,
 
-    onMaskClick: PropTypes.func,
-    onMaskMouseDown: PropTypes.func,
-
-
     placement: PropTypes.any,
+
     //translaton
     timeout: PropTypes.any,
     addEndListener: PropTypes.func,
+    addMaskEndListener: PropTypes.func,
     onEnter: PropTypes.func,
     onEntering: PropTypes.func,
     onEntered: PropTypes.func,
     onExit: PropTypes.func,
     onExiting: PropTypes.func,
     onExited: PropTypes.func,
+    onMaskEnter: PropTypes.func,
+    onMaskEntering: PropTypes.func,
+    onMaskEntered: PropTypes.func,
+    onMaskExit: PropTypes.func,
+    onMaskExiting: PropTypes.func,
+    onMaskExited: PropTypes.func,
 };
 
 export default class Popup extends React.Component {
@@ -54,12 +58,14 @@ export default class Popup extends React.Component {
         prefixCls: 'rw-popup',
         rootComponent: React.Fragment,
         popupComponent: 'div',
+        maskComponent: 'div',
         mask: false,
         fixed: false,
         //禁用每次刷新更新位置
         resetPositionOnUpdate: true,
         visible: true,
         addEndListener: noop,
+        addMaskEndListener: noop,
         placement: {
             of: window,
             collision: 'flip', // none flip fit flipfit
@@ -232,45 +238,75 @@ export default class Popup extends React.Component {
         return this._popupMaskRef ? ReactDOM.findDOMNode(this._popupMaskRef) : null;
     }
 
-    renderPopupMask() {
-        const { prefixCls, mask, maskClassName, popupMaskProps, fixed } = this.props;
-
-        const classes = classNames({
-            [`${prefixCls}-mask`]: true,
-            [`${prefixCls}-mask-fixed`]: fixed,
-            [maskClassName]: maskClassName
-        });
-
-        return mask ?
-            <div
-                onMouseDown={this.handleMaskMouseDown}
-                onClick={this.handleMaskClick}
-                {...popupMaskProps}
-                ref={this.refPopupMask}
-                className={classes}
-            ></div> :
-            null;
-    }
-
     onTransitionChange(action, node) {
         const props = this.props;
-        const pupupMaskDOM = this.getPopupMaskDOM();
 
         if (props[action]) {
-            props[action](node, pupupMaskDOM);
+            props[action](node);
         }
     }
 
     onTransitionIn(action, node) {
         const { then } = this.state;
         const props = this.props;
-        const pupupMaskDOM = this.getPopupMaskDOM();
 
         then(() => {
             if (props[action]) {
-                props[action](node, pupupMaskDOM);
+                props[action](node);
             }
         });
+    }
+
+    renderPopupMask() {
+        const {
+            prefixCls,
+            mask,
+            visible,
+            maskProps = {},
+            fixed,
+            timeout,
+            addMaskEndListener,
+            maskComponent: MaskComponent
+        } = this.props;
+
+        const cls = classNames({
+            [`${prefixCls}-mask`]: true,
+            [`${prefixCls}-mask-fixed`]: fixed,
+            [maskProps.className]: maskProps.className
+        });
+
+        return (
+            <Transition
+                timeout={timeout}
+                addEndListener={
+                    timeout == null && addMaskEndListener === noop ?
+                        (node, cb) => cb() :
+                        addMaskEndListener
+                }
+
+                in={mask && visible}
+
+                onEnter={this.onTransitionIn.bind(this, 'onMaskEnter')}
+                onEntering={this.onTransitionIn.bind(this, 'onMaskEntering')}
+                onEntered={this.onTransitionIn.bind(this, 'onMaskEntered')}
+
+                onExit={this.onTransitionChange.bind(this, 'onMaskExit')}
+                onExiting={this.onTransitionChange.bind(this, 'onMaskExiting')}
+                onExited={this.onTransitionChange.bind(this, 'onMaskExited')}
+
+                unmountOnExit
+                mountOnEnter
+                enter
+                exit
+                appear
+            >
+                <MaskComponent
+                    {...maskProps}
+                    ref={this.refPopupMask}
+                    className={cls}
+                />
+            </Transition>
+        );
     }
 
     renderPopup() {
