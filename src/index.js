@@ -1,8 +1,9 @@
 import React, { Fragment } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
+import classnames from 'classnames';
 import position from 'bplokjs-position';
+import CSSTransition from './CSSTransition';
 import Transition from 'react-widget-transition/lib/Transition';
 import warning from 'warning';
 import omit from 'object.omit';
@@ -14,19 +15,53 @@ function isPromiseLike(promise) {
     return promise && typeof promise.then === 'function';
 }
 
+
+const classNamesShape = PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.shape({
+        enter: PropTypes.string,
+        exit: PropTypes.string,
+        active: PropTypes.string,
+    }),
+    PropTypes.shape({
+        enter: PropTypes.string,
+        enterDone: PropTypes.string,
+        enterActive: PropTypes.string,
+        exit: PropTypes.string,
+        exitDone: PropTypes.string,
+        exitActive: PropTypes.string,
+    }),
+]);
+
 const propTypes = {
     prefixCls: PropTypes.string,
     className: PropTypes.string,
+    /** 
+    * @type {string | {
+    *  appear?: string,
+    *  appearActive?: string,
+    *  enter?: string,
+    *  enterActive?: string,
+    *  enterDone?: string,
+    *  exit?: string,
+    *  exitActive?: string,
+    *  exitDone?: string,
+    * }}
+    * */
+    classNames: classNamesShape,
+    maskClassNames: classNamesShape,
+
     mask: PropTypes.bool,
     visible: PropTypes.bool,
     fixed: PropTypes.bool,
-    destroyOnHide: PropTypes.bool,
+    mountOnEnter: PropTypes.bool,
+    unmountOnExit: PropTypes.bool,
     resetPositionOnUpdate: PropTypes.bool,
 
     rootComponent: PropTypes.any,
     popupComponent: PropTypes.any,
     transitionComponent: PropTypes.any,
-    maskTransitionComponent: PropTypes.any,
+
     maskComponent: PropTypes.any,
     maskProps: PropTypes.object,
 
@@ -50,7 +85,7 @@ const propTypes = {
     onMaskExited: PropTypes.func,
 };
 
-export default class Popup extends React.Component {
+class Popup extends React.Component {
     static propTypes = propTypes
 
     static childContextTypes = {
@@ -62,9 +97,9 @@ export default class Popup extends React.Component {
         rootComponent: React.Fragment,
         popupComponent: 'div',
         transitionComponent: Transition,
-        maskTransitionComponent: Transition,
         maskComponent: 'div',
-        destroyOnHide: true,
+        mountOnEnter: true,
+        unmountOnExit: true, // destroyOnHide
         mask: false,
         fixed: false,
         //禁用每次刷新更新位置
@@ -205,6 +240,17 @@ export default class Popup extends React.Component {
     }
 
     componentDidMount() {
+        const props = this.props;
+
+        if (!props.visible && !props.mountOnEnter) {
+            const popupDOM = this.getPopupDOM();
+            const popupMaskDOM = this.getPopupMaskDOM();
+
+            popupDOM && (popupDOM.style.display = 'none');
+
+            popupMaskDOM && (popupMaskDOM.style.display = 'none');
+        }
+
         this.updatePosition();
     }
 
@@ -213,20 +259,6 @@ export default class Popup extends React.Component {
     }
 
     componentWillUnmount() { }
-
-    handleMaskClick = (e) => {
-        const { onMaskClick } = this.props;
-        if (onMaskClick) {
-            onMaskClick(e);
-        }
-    }
-
-    handleMaskMouseDown = (e) => {
-        const { onMaskMouseDown } = this.props;
-        if (onMaskMouseDown) {
-            onMaskMouseDown(e);
-        }
-    }
 
     refPopup = (el) => {
         this._popupRef = el;
@@ -248,23 +280,48 @@ export default class Popup extends React.Component {
         return this._popupMaskRef ? ReactDOM.findDOMNode(this._popupMaskRef) : null;
     }
 
-    onTransitionChange(action, ...args) {
-        const props = this.props;
-
-        if (props[action]) {
-            props[action](...args);
-        }
-    }
-
     onTransitionIn(action, ...args) {
         const { then } = this.state;
         const props = this.props;
 
+        if (!props.unmountOnExit && (action === 'onEnter' || action === 'onMaskEnter')) {
+            args[0].style.display = '';
+        }
+
         then(() => {
+
+            if (/^onMask/.test(action) && props.maskClassNames) {
+                this[action](...args);
+            }
+
+            if (!/^onMask/.test(action) && props.classNames) {
+                this[action](...args);
+            }
+
             if (props[action]) {
                 props[action](...args);
             }
         });
+    }
+
+    onTransitionChange(action, ...args) {
+        const props = this.props;
+
+        if (!props.unmountOnExit && (action === 'onExited' || action === 'onMaskExited')) {
+            args[0].style.display = 'none';
+        }
+
+        if (/^onMask/.test(action) && props.maskClassNames) {
+            this[action](...args);
+        }
+
+        if (!/^onMask/.test(action) && props.classNames) {
+            this[action](...args);
+        }
+
+        if (props[action]) {
+            props[action](...args);
+        }
     }
 
     renderPopupMask() {
@@ -272,16 +329,17 @@ export default class Popup extends React.Component {
             prefixCls,
             mask,
             visible,
-            destroyOnHide,
+            unmountOnExit,
+            mountOnEnter,
             maskProps = {},
             fixed,
             timeout,
             addMaskEndListener,
-            maskTransitionComponent: Transition,
+            transitionComponent: Transition,
             maskComponent: MaskComponent
         } = this.props;
 
-        const cls = classNames({
+        const cls = classnames({
             [`${prefixCls}-mask`]: true,
             [`${prefixCls}-mask-fixed`]: fixed,
             [maskProps.className]: maskProps.className
@@ -306,8 +364,8 @@ export default class Popup extends React.Component {
                 onExiting={this.onTransitionChange.bind(this, 'onMaskExiting')}
                 onExited={this.onTransitionChange.bind(this, 'onMaskExited')}
 
-                unmountOnExit={destroyOnHide}
-                mountOnEnter
+                unmountOnExit={unmountOnExit}
+                mountOnEnter={mountOnEnter}
                 enter
                 exit
                 appear
@@ -328,7 +386,8 @@ export default class Popup extends React.Component {
             fixed,
             children,
             visible,
-            destroyOnHide,
+            mountOnEnter,
+            unmountOnExit,
             timeout,
             addEndListener,
             rootComponent: RootComponent,
@@ -337,7 +396,7 @@ export default class Popup extends React.Component {
             ...others
         } = this.props;
 
-        const cls = classNames({
+        const cls = classnames({
             [prefixCls]: true,
             [`${prefixCls}-fixed`]: fixed,
             [className]: className
@@ -366,8 +425,8 @@ export default class Popup extends React.Component {
                     onExiting={this.onTransitionChange.bind(this, 'onExiting')}
                     onExited={this.onTransitionChange.bind(this, 'onExited')}
 
-                    unmountOnExit={destroyOnHide}
-                    mountOnEnter
+                    unmountOnExit={unmountOnExit}
+                    mountOnEnter={mountOnEnter}
                     enter
                     exit
                     appear
@@ -388,4 +447,9 @@ export default class Popup extends React.Component {
     render() {
         return this.renderPopup();
     }
+
 }
+
+Object.assign(Popup.prototype, CSSTransition);
+
+export default Popup;

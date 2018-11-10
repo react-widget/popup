@@ -9,30 +9,24 @@ function Test() {
     return <a>Test a</a>;
 }
 
-const CustomCSSTransition = function (props) {
-    const classNames = {
-        "appear": "animated",
-        "appearActive": "fadeBottomIn",
-        "enter": "animated",
-        "enterActive": "fadeBottomIn",
-        "enterDone": "fadeBottomIn",
-        "exit": "animated",
-        "exitActive": "fadeBottomOut",
-        "exitDone": "fadeBottomIn",
-    }
-    return <CSSTransition {...props} classNames={classNames} />;
-}
+const animateClassNames = {
+    "appear": "animated",
+    "appearActive": "fadeBottomIn",
+    "enter": "animated",
+    "enterActive": "fadeBottomIn",
+    "enterDone": "fadeBottomIn",
+    "exit": "animated",
+    "exitActive": "fadeBottomOut",
+    "exitDone": "fadeBottomIn",
+};
 
-const CustomMaskCSSTransition = function (props) {
-    const classNames = {
-        "appear": "animated",
-        "appearActive": "fadeIn",
-        "enter": "animated",
-        "enterActive": "fadeIn",
-        "exit": "animated",
-        "exitActive": "fadeOut"
-    }
-    return <CSSTransition {...props} classNames={classNames} />;
+const maskAnimateClassNames = {
+    "appear": "animated",
+    "appearActive": "fadeIn",
+    "enter": "animated",
+    "enterActive": "fadeIn",
+    "exit": "animated",
+    "exitActive": "fadeOut"
 }
 
 export default class DEMO extends Component {
@@ -79,6 +73,7 @@ export default class DEMO extends Component {
                 <div>
                     <button onClick={this.toggleClick}>{visible ? '关闭' : '显示'}</button>
                     <button onClick={this.toggleClick2}>{mask ? '关闭遮罩层' : '显示遮罩层'}</button>
+                    <button onClick={() => this.forceUpdate()}>refresh</button>
                 </div>
                 <div style={{
                     height: "calc(100% - 30px)",
@@ -88,6 +83,7 @@ export default class DEMO extends Component {
                     <Popup
                         visible={visible}
                         mask={mask}
+                        unmountOnExit={false}
                         resetPositionOnUpdate
                         style={{
                             background: '#ff5454',
@@ -98,9 +94,11 @@ export default class DEMO extends Component {
                         onEntered={() => console.log('entered')}
                         onExit={() => console.log('Popup onExit')}
                         onExited={() => console.log('Popup onExited')}
-                        maskTransitionComponent={CustomMaskCSSTransition}
 
-                        transitionComponent={CustomCSSTransition}
+                        classNames={animateClassNames}
+
+                        maskClassNames={maskAnimateClassNames}
+
                         placement={{
                             of(el) {
                                 return el.parentElement;
