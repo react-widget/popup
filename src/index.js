@@ -64,6 +64,7 @@ export default class Popup extends React.Component {
         transitionComponent: Transition,
         maskTransitionComponent: Transition,
         maskComponent: 'div',
+        destroyOnHide: true,
         mask: false,
         fixed: false,
         //禁用每次刷新更新位置
@@ -271,16 +272,14 @@ export default class Popup extends React.Component {
             prefixCls,
             mask,
             visible,
+            destroyOnHide,
             maskProps = {},
             fixed,
             timeout,
             addMaskEndListener,
-            // getTransitionComponent,
             maskTransitionComponent: Transition,
             maskComponent: MaskComponent
         } = this.props;
-
-        // const Transition = getTransitionComponent();
 
         const cls = classNames({
             [`${prefixCls}-mask`]: true,
@@ -307,7 +306,7 @@ export default class Popup extends React.Component {
                 onExiting={this.onTransitionChange.bind(this, 'onMaskExiting')}
                 onExited={this.onTransitionChange.bind(this, 'onMaskExited')}
 
-                unmountOnExit
+                unmountOnExit={destroyOnHide}
                 mountOnEnter
                 enter
                 exit
@@ -329,16 +328,14 @@ export default class Popup extends React.Component {
             fixed,
             children,
             visible,
+            destroyOnHide,
             timeout,
             addEndListener,
             rootComponent: RootComponent,
             popupComponent: PopupComponent,
             transitionComponent: Transition,
-            //getTransitionComponent,
             ...others
         } = this.props;
-
-        //  const Transition = getTransitionComponent();
 
         const cls = classNames({
             [prefixCls]: true,
@@ -369,7 +366,7 @@ export default class Popup extends React.Component {
                     onExiting={this.onTransitionChange.bind(this, 'onExiting')}
                     onExited={this.onTransitionChange.bind(this, 'onExited')}
 
-                    unmountOnExit
+                    unmountOnExit={destroyOnHide}
                     mountOnEnter
                     enter
                     exit

@@ -10,7 +10,29 @@ function Test() {
 }
 
 const CustomCSSTransition = function (props) {
-    return <CSSTransition {...props} classNames="test" />;
+    const classNames = {
+        "appear": "animated",
+        "appearActive": "fadeBottomIn",
+        "enter": "animated",
+        "enterActive": "fadeBottomIn",
+        "enterDone": "fadeBottomIn",
+        "exit": "animated",
+        "exitActive": "fadeBottomOut",
+        "exitDone": "fadeBottomIn",
+    }
+    return <CSSTransition {...props} classNames={classNames} />;
+}
+
+const CustomMaskCSSTransition = function (props) {
+    const classNames = {
+        "appear": "animated",
+        "appearActive": "fadeIn",
+        "enter": "animated",
+        "enterActive": "fadeIn",
+        "exit": "animated",
+        "exitActive": "fadeOut"
+    }
+    return <CSSTransition {...props} classNames={classNames} />;
 }
 
 export default class DEMO extends Component {
@@ -58,30 +80,6 @@ export default class DEMO extends Component {
                     <button onClick={this.toggleClick}>{visible ? '关闭' : '显示'}</button>
                     <button onClick={this.toggleClick2}>{mask ? '关闭遮罩层' : '显示遮罩层'}</button>
                 </div>
-                <OrigCSSTransition
-                    in={visible}
-                    timeout={2000}
-                    classNames="test"
-                    onEntered={() => console.log('OrigCSSTransition entered')}
-                    onExit={() => console.log('OrigCSSTransition onExit')}
-                    onExited={() => console.log('OrigCSSTransition onExited')}
-                >
-                    <div>
-                        center2...
-                    </div>
-                </OrigCSSTransition>
-                <CSSTransition
-                    in={visible}
-                    timeout={2000}
-                    classNames="test"
-                    onEntered={() => console.log('CSSTransition entered')}
-                    onExit={() => console.log('CSSTransition onExit')}
-                    onExited={() => console.log('CSSTransition onExited')}
-                >
-                    <div>
-                        center2...
-                    </div>
-                </CSSTransition>
                 <div style={{
                     height: "calc(100% - 30px)",
                     position: "relative",
@@ -89,17 +87,19 @@ export default class DEMO extends Component {
                 }}>
                     <Popup
                         visible={visible}
-
+                        mask={mask}
                         resetPositionOnUpdate
                         style={{
                             background: '#ff5454',
                             color: '#FFF',
                             padding: 10
                         }}
-                        timeout={2000}
+                        timeout={500}
                         onEntered={() => console.log('entered')}
                         onExit={() => console.log('Popup onExit')}
                         onExited={() => console.log('Popup onExited')}
+                        maskTransitionComponent={CustomMaskCSSTransition}
+
                         transitionComponent={CustomCSSTransition}
                         placement={{
                             of(el) {

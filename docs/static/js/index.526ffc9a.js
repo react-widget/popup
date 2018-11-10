@@ -493,8 +493,32 @@ function Test() {
 }
 
 var CustomCSSTransition = function CustomCSSTransition(props) {
+  var classNames = {
+    "appear": "animated",
+    "appearActive": "fadeBottomIn",
+    "enter": "animated",
+    "enterActive": "fadeBottomIn",
+    "enterDone": "fadeBottomIn",
+    "exit": "animated",
+    "exitActive": "fadeBottomOut",
+    "exitDone": "fadeBottomIn"
+  };
   return _react.default.createElement(_CSSTransition.default, (0, _extends2.default)({}, props, {
-    classNames: "test"
+    classNames: classNames
+  }));
+};
+
+var CustomMaskCSSTransition = function CustomMaskCSSTransition(props) {
+  var classNames = {
+    "appear": "animated",
+    "appearActive": "fadeIn",
+    "enter": "animated",
+    "enterActive": "fadeIn",
+    "exit": "animated",
+    "exitActive": "fadeOut"
+  };
+  return _react.default.createElement(_CSSTransition.default, (0, _extends2.default)({}, props, {
+    classNames: classNames
   }));
 };
 
@@ -560,33 +584,7 @@ function (_Component) {
         onClick: this.toggleClick
       }, visible ? '关闭' : '显示'), _react.default.createElement("button", {
         onClick: this.toggleClick2
-      }, mask ? '关闭遮罩层' : '显示遮罩层')), _react.default.createElement(_reactTransitionGroup.CSSTransition, {
-        in: visible,
-        timeout: 2000,
-        classNames: "test",
-        onEntered: function onEntered() {
-          return console.log('OrigCSSTransition entered');
-        },
-        onExit: function onExit() {
-          return console.log('OrigCSSTransition onExit');
-        },
-        onExited: function onExited() {
-          return console.log('OrigCSSTransition onExited');
-        }
-      }, _react.default.createElement("div", null, "center2...")), _react.default.createElement(_CSSTransition.default, {
-        in: visible,
-        timeout: 2000,
-        classNames: "test",
-        onEntered: function onEntered() {
-          return console.log('CSSTransition entered');
-        },
-        onExit: function onExit() {
-          return console.log('CSSTransition onExit');
-        },
-        onExited: function onExited() {
-          return console.log('CSSTransition onExited');
-        }
-      }, _react.default.createElement("div", null, "center2...")), _react.default.createElement("div", {
+      }, mask ? '关闭遮罩层' : '显示遮罩层')), _react.default.createElement("div", {
         style: {
           height: "calc(100% - 30px)",
           position: "relative",
@@ -594,13 +592,14 @@ function (_Component) {
         }
       }, _react.default.createElement(_lib.default, {
         visible: visible,
+        mask: mask,
         resetPositionOnUpdate: true,
         style: {
           background: '#ff5454',
           color: '#FFF',
           padding: 10
         },
-        timeout: 2000,
+        timeout: 500,
         onEntered: function onEntered() {
           return console.log('entered');
         },
@@ -610,6 +609,7 @@ function (_Component) {
         onExited: function onExited() {
           return console.log('Popup onExited');
         },
+        maskTransitionComponent: CustomMaskCSSTransition,
         transitionComponent: CustomCSSTransition,
         placement: {
           of: function of(el) {
@@ -807,11 +807,24 @@ var _reactDom = _interopRequireDefault(__webpack_require__(/*! react-dom */ "./n
 
 __webpack_require__(/*! ./style/index.scss */ "./examples/style/index.scss");
 
+__webpack_require__(/*! ./style/animate.scss */ "./examples/style/animate.scss");
+
 __webpack_require__(/*! ../lib/style/index.css */ "./lib/style/index.css");
 
 var _Demo = _interopRequireDefault(__webpack_require__(/*! ./Demo */ "./examples/Demo.js"));
 
 _reactDom.default.render(_react.default.createElement(_Demo.default, null), demo);
+
+/***/ }),
+
+/***/ "./examples/style/animate.scss":
+/*!*************************************!*\
+  !*** ./examples/style/animate.scss ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// extracted by mini-css-extract-plugin
 
 /***/ }),
 
@@ -1140,14 +1153,14 @@ function (_React$Component) {
           prefixCls = _this$props2.prefixCls,
           mask = _this$props2.mask,
           visible = _this$props2.visible,
+          destroyOnHide = _this$props2.destroyOnHide,
           _this$props2$maskProp = _this$props2.maskProps,
           maskProps = _this$props2$maskProp === void 0 ? {} : _this$props2$maskProp,
           fixed = _this$props2.fixed,
           timeout = _this$props2.timeout,
           addMaskEndListener = _this$props2.addMaskEndListener,
           Transition = _this$props2.maskTransitionComponent,
-          MaskComponent = _this$props2.maskComponent; // const Transition = getTransitionComponent();
-
+          MaskComponent = _this$props2.maskComponent;
       var cls = (0, _classnames.default)((_classNames = {}, (0, _defineProperty2.default)(_classNames, "".concat(prefixCls, "-mask"), true), (0, _defineProperty2.default)(_classNames, "".concat(prefixCls, "-mask-fixed"), fixed), (0, _defineProperty2.default)(_classNames, maskProps.className, maskProps.className), _classNames));
       return _react.default.createElement(Transition, {
         timeout: timeout,
@@ -1161,7 +1174,7 @@ function (_React$Component) {
         onExit: this.onTransitionChange.bind(this, 'onMaskExit'),
         onExiting: this.onTransitionChange.bind(this, 'onMaskExiting'),
         onExited: this.onTransitionChange.bind(this, 'onMaskExited'),
-        unmountOnExit: true,
+        unmountOnExit: destroyOnHide,
         mountOnEnter: true,
         enter: true,
         exit: true,
@@ -1182,13 +1195,13 @@ function (_React$Component) {
           fixed = _this$props3.fixed,
           children = _this$props3.children,
           visible = _this$props3.visible,
+          destroyOnHide = _this$props3.destroyOnHide,
           timeout = _this$props3.timeout,
           addEndListener = _this$props3.addEndListener,
           RootComponent = _this$props3.rootComponent,
           PopupComponent = _this$props3.popupComponent,
           Transition = _this$props3.transitionComponent,
-          others = (0, _objectWithoutProperties2.default)(_this$props3, ["prefixCls", "className", "fixed", "children", "visible", "timeout", "addEndListener", "rootComponent", "popupComponent", "transitionComponent"]); //  const Transition = getTransitionComponent();
-
+          others = (0, _objectWithoutProperties2.default)(_this$props3, ["prefixCls", "className", "fixed", "children", "visible", "destroyOnHide", "timeout", "addEndListener", "rootComponent", "popupComponent", "transitionComponent"]);
       var cls = (0, _classnames.default)((_classNames2 = {}, (0, _defineProperty2.default)(_classNames2, prefixCls, true), (0, _defineProperty2.default)(_classNames2, "".concat(prefixCls, "-fixed"), fixed), (0, _defineProperty2.default)(_classNames2, className, className), _classNames2));
       (0, _warning.default)(PopupComponent !== _react.Fragment, "popupComponent receive a Fragment Component!");
       return _react.default.createElement(RootComponent, null, this.renderPopupMask(), _react.default.createElement(Transition, {
@@ -1203,7 +1216,7 @@ function (_React$Component) {
         onExit: this.onTransitionChange.bind(this, 'onExit'),
         onExiting: this.onTransitionChange.bind(this, 'onExiting'),
         onExited: this.onTransitionChange.bind(this, 'onExited'),
-        unmountOnExit: true,
+        unmountOnExit: destroyOnHide,
         mountOnEnter: true,
         enter: true,
         exit: true,
@@ -1261,6 +1274,7 @@ exports.default = Popup;
   transitionComponent: _Transition.default,
   maskTransitionComponent: _Transition.default,
   maskComponent: 'div',
+  destroyOnHide: true,
   mask: false,
   fixed: false,
   //禁用每次刷新更新位置
@@ -1307,4 +1321,4 @@ module.exports = __webpack_require__(/*! D:\wamp\www\github-projects\react-widge
 /***/ })
 
 /******/ });
-//# sourceMappingURL=index.0a1fbead.js.map
+//# sourceMappingURL=index.526ffc9a.js.map
