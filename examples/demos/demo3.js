@@ -1,11 +1,16 @@
 import React, { Component, Fragment } from 'react';
 import Popup from '../../lib';
 import $ from 'jquery'
-import Deferred from 'bplokjs-deferred'
+import CSSTransition from 'react-widget-transition/lib/CSSTransition';
+import Transition from 'react-widget-transition/lib/Transition';
+import { CSSTransition as OrigCSSTransition } from 'react-transition-group'
 
 function Test() {
-    console.log(1);
-    return null;
+    return <a>Test a</a>;
+}
+
+const CustomCSSTransition = function (props) {
+    return <CSSTransition {...props} classNames="test" />;
 }
 
 export default class DEMO extends Component {
@@ -53,6 +58,30 @@ export default class DEMO extends Component {
                     <button onClick={this.toggleClick}>{visible ? '关闭' : '显示'}</button>
                     <button onClick={this.toggleClick2}>{mask ? '关闭遮罩层' : '显示遮罩层'}</button>
                 </div>
+                <OrigCSSTransition
+                    in={visible}
+                    timeout={2000}
+                    classNames="test"
+                    onEntered={() => console.log('OrigCSSTransition entered')}
+                    onExit={() => console.log('OrigCSSTransition onExit')}
+                    onExited={() => console.log('OrigCSSTransition onExited')}
+                >
+                    <div>
+                        center2...
+                    </div>
+                </OrigCSSTransition>
+                <CSSTransition
+                    in={visible}
+                    timeout={2000}
+                    classNames="test"
+                    onEntered={() => console.log('CSSTransition entered')}
+                    onExit={() => console.log('CSSTransition onExit')}
+                    onExited={() => console.log('CSSTransition onExited')}
+                >
+                    <div>
+                        center2...
+                    </div>
+                </CSSTransition>
                 <div style={{
                     height: "calc(100% - 30px)",
                     position: "relative",
@@ -60,31 +89,18 @@ export default class DEMO extends Component {
                 }}>
                     <Popup
                         visible={visible}
-                        mask={mask}
+
                         resetPositionOnUpdate
                         style={{
                             background: '#ff5454',
                             color: '#FFF',
                             padding: 10
                         }}
-                        timeout={500}
-                        onEnter={node => {
-                            $(node).hide();
-                            $(node).stop().fadeIn(500)
-                        }}
-                        onExit={node => {
-                            $(node).stop().fadeOut(500)
-                        }}
-                        onExited={node => {
-                            console.log('onExited')
-                        }}
-                        onMaskEnter={node => {
-                            $(node).hide();
-                            $(node).stop().fadeIn(500)
-                        }}
-                        onMaskExit={node => {
-                            $(node).stop().fadeOut(500)
-                        }}
+                        timeout={2000}
+                        onEntered={() => console.log('entered')}
+                        onExit={() => console.log('Popup onExit')}
+                        onExited={() => console.log('Popup onExited')}
+                        transitionComponent={CustomCSSTransition}
                         placement={{
                             of(el) {
                                 return el.parentElement;
@@ -92,8 +108,8 @@ export default class DEMO extends Component {
                         }}
                     >
                         <div>
-                            center2...
-                    </div>
+                            center2...<Test />
+                        </div>
                     </Popup>
                 </div>
             </Fragment>

@@ -13,7 +13,7 @@
         "prop-types": "^15.6.2",
         "react": "^16.5.2",
         "react-dom": "^16.5.2",
-        "react-widget-transition": "^1.0.0",
+        "react-widget-transition": "^1.0.2",
         "warning": "^4.0.2"
     },
     "devDependencies": {

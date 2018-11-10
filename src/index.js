@@ -20,14 +20,17 @@ const propTypes = {
     mask: PropTypes.bool,
     visible: PropTypes.bool,
     fixed: PropTypes.bool,
+    destroyOnHide: PropTypes.bool,
     resetPositionOnUpdate: PropTypes.bool,
 
     rootComponent: PropTypes.any,
     popupComponent: PropTypes.any,
+    transitionComponent: PropTypes.any,
+    maskTransitionComponent: PropTypes.any,
     maskComponent: PropTypes.any,
     maskProps: PropTypes.object,
 
-    placement: PropTypes.any,
+    placement: PropTypes.any,// object func
 
     //translaton
     timeout: PropTypes.any,
@@ -58,6 +61,8 @@ export default class Popup extends React.Component {
         prefixCls: 'rw-popup',
         rootComponent: React.Fragment,
         popupComponent: 'div',
+        transitionComponent: Transition,
+        maskTransitionComponent: Transition,
         maskComponent: 'div',
         mask: false,
         fixed: false,
@@ -185,8 +190,12 @@ export default class Popup extends React.Component {
                         true;
 
                 if (shouldSetPosition) {
-                    const position = this.getPosition(opts);
-                    this.setPosition(position.pos);
+                    if (typeof opts === 'function') {
+                        opts(this.getPopupDOM());
+                    } else {
+                        const position = this.getPosition(opts);
+                        this.setPosition(position.pos);
+                    }
                     this._hasSetPosition = true;
                 }
 
@@ -238,21 +247,21 @@ export default class Popup extends React.Component {
         return this._popupMaskRef ? ReactDOM.findDOMNode(this._popupMaskRef) : null;
     }
 
-    onTransitionChange(action, node) {
+    onTransitionChange(action, ...args) {
         const props = this.props;
 
         if (props[action]) {
-            props[action](node);
+            props[action](...args);
         }
     }
 
-    onTransitionIn(action, node) {
+    onTransitionIn(action, ...args) {
         const { then } = this.state;
         const props = this.props;
 
         then(() => {
             if (props[action]) {
-                props[action](node);
+                props[action](...args);
             }
         });
     }
@@ -266,8 +275,12 @@ export default class Popup extends React.Component {
             fixed,
             timeout,
             addMaskEndListener,
+            // getTransitionComponent,
+            maskTransitionComponent: Transition,
             maskComponent: MaskComponent
         } = this.props;
+
+        // const Transition = getTransitionComponent();
 
         const cls = classNames({
             [`${prefixCls}-mask`]: true,
@@ -320,8 +333,12 @@ export default class Popup extends React.Component {
             addEndListener,
             rootComponent: RootComponent,
             popupComponent: PopupComponent,
+            transitionComponent: Transition,
+            //getTransitionComponent,
             ...others
         } = this.props;
+
+        //  const Transition = getTransitionComponent();
 
         const cls = classNames({
             [prefixCls]: true,
