@@ -49,8 +49,6 @@ const propTypes = {
     * */
     transitionClassNames: classNamesShape,
     maskTransitionClassNames: classNamesShape,
-    classNames: classNamesShape,
-    maskClassNames: classNamesShape,
 
     mask: PropTypes.bool,
     visible: PropTypes.bool,
@@ -325,19 +323,19 @@ class Popup extends React.Component {
 
         before(() => {
             if (
-                (action === 'onMaskEnter' && props.maskClassNames) ||
-                (action === 'onEnter' && props.classNames)
+                (action === 'onMaskEnter' && props.maskTransitionClassNames) ||
+                (action === 'onEnter' && props.transitionClassNames)
             ) {
                 this.removeClasses(node, 'exit', action === 'onMaskEnter');
             }
         })
 
         after(() => {
-            if (/^onMask/.test(action) && props.maskClassNames) {
+            if (/^onMask/.test(action) && props.maskTransitionClassNames) {
                 this[action](node, appearing);
             }
 
-            if (!/^onMask/.test(action) && props.classNames) {
+            if (!/^onMask/.test(action) && props.transitionClassNames) {
                 this[action](node, appearing);
             }
 
@@ -354,11 +352,11 @@ class Popup extends React.Component {
     onTransitionOut(action, node) {
         const props = this.props;
 
-        if (/^onMask/.test(action) && props.maskClassNames) {
+        if (/^onMask/.test(action) && props.maskTransitionClassNames) {
             this[action](node);
         }
 
-        if (!/^onMask/.test(action) && props.classNames) {
+        if (!/^onMask/.test(action) && props.transitionClassNames) {
             this[action](node);
         }
 

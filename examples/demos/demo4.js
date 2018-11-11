@@ -1,10 +1,28 @@
 import React, { Component, Fragment } from 'react';
 import Popup from '../../lib';
-import $ from 'jquery'
 
 function Test() {
-    console.log(1);
-    return null;
+    return <a>Test a</a>;
+}
+
+const animateClassNames = {
+    "appear": "animated",
+    "appearActive": "fadeBottomIn",
+    "enter": "animated",
+    "enterActive": "fadeBottomIn",
+    "enterDone": "",
+    "exit": "animated",
+    "exitActive": "fadeBottomOut",
+    "exitDone": "",
+};
+
+const maskAnimateClassNames = {
+    "appear": "animated",
+    "appearActive": "fadeIn",
+    "enter": "animated",
+    "enterActive": "fadeIn",
+    "exit": "animated",
+    "exitActive": "fadeOut"
 }
 
 export default class DEMO extends Component {
@@ -51,6 +69,7 @@ export default class DEMO extends Component {
                 <div>
                     <button onClick={this.toggleClick}>{visible ? '关闭' : '显示'}</button>
                     <button onClick={this.toggleClick2}>{mask ? '关闭遮罩层' : '显示遮罩层'}</button>
+                    <button onClick={() => this.forceUpdate()}>refresh</button>
                 </div>
                 <div style={{
                     height: "calc(100% - 30px)",
@@ -60,30 +79,32 @@ export default class DEMO extends Component {
                     <Popup
                         visible={visible}
                         mask={mask}
+                        unmountOnExit={true}
                         resetPositionOnUpdate
                         style={{
                             background: '#ff5454',
                             color: '#FFF',
                             padding: 10
                         }}
-                        timeout={500}
-                        onEnter={node => {
-                            $(node).hide();
-                            $(node).stop().fadeIn(500)
+                        onEnter={() => console.log('onEnter')}
+                        onEntering={() => console.log('onEntering')}
+                        onEntered={() => console.log('onEntered')}
+                        onExit={() => console.log('Popup onExit')}
+                        onExiting={() => console.log('Popup onExiting')}
+                        onExited={() => console.log('Popup onExited')}
+
+                        maskProps={{
+                            onClick: () => {
+                                this.toggleClick2()
+                            }
                         }}
-                        onExit={node => {
-                            $(node).stop().fadeOut(500)
-                        }}
-                        onExited={node => {
-                            console.log('onExited')
-                        }}
-                        onMaskEnter={node => {
-                            $(node).hide();
-                            $(node).stop().fadeIn(500)
-                        }}
-                        onMaskExit={node => {
-                            $(node).stop().fadeOut(500)
-                        }}
+
+                        fixed
+
+                        timeout={300}
+                        transitionClassNames={animateClassNames}
+                        maskTransitionClassNames={maskAnimateClassNames}
+
                         placement={{
                             of(el) {
                                 return el.parentElement;
@@ -91,8 +112,8 @@ export default class DEMO extends Component {
                         }}
                     >
                         <div>
-                            center2...
-                    </div>
+                            center2...<Test />
+                        </div>
                     </Popup>
                 </div>
             </Fragment>

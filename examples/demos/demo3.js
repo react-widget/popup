@@ -1,12 +1,11 @@
 import React, { Component, Fragment } from 'react';
 import Popup from '../../lib';
-import $ from 'jquery'
-import CSSTransition from 'react-widget-transition/lib/CSSTransition';
-import Transition from 'react-widget-transition/lib/Transition';
-import { CSSTransition as OrigCSSTransition } from 'react-transition-group'
+
+let i = 1;
 
 function Test() {
-    return <a>Test a</a>;
+    console.log('1')
+    return <a>Test a{i++}</a>;
 }
 
 const animateClassNames = {
@@ -14,10 +13,10 @@ const animateClassNames = {
     "appearActive": "fadeBottomIn",
     "enter": "animated",
     "enterActive": "fadeBottomIn",
-    "enterDone": "fadeBottomIn",
+    "enterDone": "",
     "exit": "animated",
     "exitActive": "fadeBottomOut",
-    "exitDone": "fadeBottomIn",
+    "exitDone": "",
 };
 
 const maskAnimateClassNames = {
@@ -65,6 +64,11 @@ export default class DEMO extends Component {
             at: 'right center'
         });
     }
+
+    componentDidMount() {
+        setInterval(this.forceUpdate.bind(this), 1000)
+    }
+
     render() {
         const { visible, mask } = this.state;
 
@@ -85,19 +89,24 @@ export default class DEMO extends Component {
                         mask={mask}
                         unmountOnExit={false}
                         resetPositionOnUpdate
+
                         style={{
                             background: '#ff5454',
                             color: '#FFF',
                             padding: 10
                         }}
-                        timeout={500}
-                        onEntered={() => console.log('entered')}
+                        onEnter={() => console.log('onEnter')}
+                        onEntering={() => console.log('onEntering')}
+                        onEntered={() => console.log('onEntered')}
                         onExit={() => console.log('Popup onExit')}
+                        onExiting={() => console.log('Popup onExiting')}
                         onExited={() => console.log('Popup onExited')}
 
-                        classNames={animateClassNames}
 
-                        maskClassNames={maskAnimateClassNames}
+
+                        timeout={300}
+                        transitionClassNames={animateClassNames}
+                        maskTransitionClassNames={maskAnimateClassNames}
 
                         placement={{
                             of(el) {

@@ -88,7 +88,7 @@ export default {
 
 
     getClassNames(type, mask) {
-        const classNames = mask ? this.props.maskClassNames : this.props.classNames;
+        const classNames = mask ? this.props.maskTransitionClassNames : this.props.transitionClassNames;
 
         let className = typeof classNames !== 'string' ?
             classNames[type] : classNames + '-' + type;
