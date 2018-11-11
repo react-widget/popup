@@ -15,7 +15,6 @@ function isPromiseLike(promise) {
     return promise && typeof promise.then === 'function';
 }
 
-
 const classNamesShape = PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.shape({
@@ -48,6 +47,8 @@ const propTypes = {
     *  exitDone?: string,
     * }}
     * */
+    transitionClassNames: classNamesShape,
+    maskTransitionClassNames: classNamesShape,
     classNames: classNamesShape,
     maskClassNames: classNamesShape,
 
@@ -57,6 +58,7 @@ const propTypes = {
     mountOnEnter: PropTypes.bool,
     unmountOnExit: PropTypes.bool,
     resetPositionOnUpdate: PropTypes.bool,
+    resetPositionOnEntered: PropTypes.bool,
 
     rootComponent: PropTypes.any,
     popupComponent: PropTypes.any,
@@ -94,7 +96,7 @@ class Popup extends React.Component {
 
     static defaultProps = {
         prefixCls: 'rw-popup',
-        rootComponent: React.Fragment,
+        rootComponent: Fragment,
         popupComponent: 'div',
         transitionComponent: Transition,
         maskComponent: 'div',
@@ -102,8 +104,10 @@ class Popup extends React.Component {
         unmountOnExit: true, // destroyOnHide
         mask: false,
         fixed: false,
-        //禁用每次刷新更新位置
+        // 禁用每次刷新更新位置
         resetPositionOnUpdate: true,
+        // 动画结束收重新更新位置，特殊场景下可能需要
+        resetPositionOnEntered: false,
         visible: true,
         addEndListener: noop,
         addMaskEndListener: noop,
@@ -117,13 +121,30 @@ class Popup extends React.Component {
     /**
      * onEnter onEntering onEntered在updatePosition执行
      */
-    static getDerivedStateFromProps({ placement }, state) {
-
+    static getDerivedStateFromProps({ placement, visible }, state) {
         placement = isPromiseLike(placement) ? placement : Promise.resolve(placement)
+        const beforeCb = [];
+        let hasStart = false;
         let deferred = Deferred();
         let promise = deferred.promise;
 
+        function before(cb) {
+            beforeCb.push(cb);
+        }
+
         function start(cb) {
+            // 防止多次调用
+            if (hasStart) {
+                placement
+                    .then(cb)
+                    .catch(e => cb(null))
+                return;
+            };
+
+            hasStart = true;
+
+            beforeCb.forEach(callback => callback());
+
             placement
                 .then(opts => {
                     cb(opts);
@@ -136,16 +157,21 @@ class Popup extends React.Component {
         }
 
         return {
+            shouldComponentUpdate: !visible && !state.shouldComponentUpdate ? false : true,
+            before,
             start,
-            then: (cb) => {
+            after: (cb) => {
+                //cb();
                 return promise = promise.then(cb);
             }
         }
     }
 
     state = {
+        shouldComponentUpdate: false,
+        before: null,
         start: null,
-        then: null,
+        after: null,
     }
 
     _hasSetPosition = false;
@@ -210,8 +236,11 @@ class Popup extends React.Component {
             popup.style.bottom = ~~pos.bottom + 'px';
         }
     }
-
-    updatePosition() {
+    /**
+     * 
+     * @param {boolean} reset 强制刷新 
+     */
+    updatePosition(reset) {
         const { visible, resetPositionOnUpdate } = this.props;
         const { start } = this.state;
 
@@ -225,7 +254,7 @@ class Popup extends React.Component {
                         resetPositionOnUpdate :
                         true;
 
-                if (shouldSetPosition) {
+                if (reset || shouldSetPosition) {
                     if (typeof opts === 'function') {
                         opts(this.getPopupDOM());
                     } else {
@@ -237,6 +266,10 @@ class Popup extends React.Component {
 
             });
         }
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        return nextState.shouldComponentUpdate;
     }
 
     componentDidMount() {
@@ -280,47 +313,67 @@ class Popup extends React.Component {
         return this._popupMaskRef ? ReactDOM.findDOMNode(this._popupMaskRef) : null;
     }
 
-    onTransitionIn(action, ...args) {
-        const { then } = this.state;
+    onTransitionIn(action, node, appearing) {
+        const { before, after } = this.state;
         const props = this.props;
 
-        if (!props.unmountOnExit && (action === 'onEnter' || action === 'onMaskEnter')) {
-            args[0].style.display = '';
-        }
+        before(() => {
+            if (!props.unmountOnExit && (action === 'onEnter' || action === 'onMaskEnter')) {
+                node.style.display = '';
+            }
+        });
 
-        then(() => {
+        before(() => {
+            if (
+                (action === 'onMaskEnter' && props.maskClassNames) ||
+                (action === 'onEnter' && props.classNames)
+            ) {
+                this.removeClasses(node, 'exit', action === 'onMaskEnter');
+            }
+        })
 
+        after(() => {
             if (/^onMask/.test(action) && props.maskClassNames) {
-                this[action](...args);
+                this[action](node, appearing);
             }
 
             if (!/^onMask/.test(action) && props.classNames) {
-                this[action](...args);
+                this[action](node, appearing);
             }
 
             if (props[action]) {
-                props[action](...args);
+                props[action](node, appearing);
+            }
+
+            if (props.resetPositionOnEntered && action === 'onEntered') {
+                this.updatePosition(true);
             }
         });
     }
 
-    onTransitionChange(action, ...args) {
+    onTransitionOut(action, node) {
         const props = this.props;
 
-        if (!props.unmountOnExit && (action === 'onExited' || action === 'onMaskExited')) {
-            args[0].style.display = 'none';
-        }
-
         if (/^onMask/.test(action) && props.maskClassNames) {
-            this[action](...args);
+            this[action](node);
         }
 
         if (!/^onMask/.test(action) && props.classNames) {
-            this[action](...args);
+            this[action](node);
         }
 
         if (props[action]) {
-            props[action](...args);
+            props[action](node);
+        }
+
+        if (!props.unmountOnExit && (action === 'onExited' || action === 'onMaskExited')) {
+            node.style.display = 'none';
+        }
+
+        if (action === 'onExited') {
+            this.setState({
+                shouldComponentUpdate: false
+            });
         }
     }
 
@@ -360,9 +413,9 @@ class Popup extends React.Component {
                 onEntering={this.onTransitionIn.bind(this, 'onMaskEntering')}
                 onEntered={this.onTransitionIn.bind(this, 'onMaskEntered')}
 
-                onExit={this.onTransitionChange.bind(this, 'onMaskExit')}
-                onExiting={this.onTransitionChange.bind(this, 'onMaskExiting')}
-                onExited={this.onTransitionChange.bind(this, 'onMaskExited')}
+                onExit={this.onTransitionOut.bind(this, 'onMaskExit')}
+                onExiting={this.onTransitionOut.bind(this, 'onMaskExiting')}
+                onExited={this.onTransitionOut.bind(this, 'onMaskExited')}
 
                 unmountOnExit={unmountOnExit}
                 mountOnEnter={mountOnEnter}
@@ -421,9 +474,9 @@ class Popup extends React.Component {
                     onEntering={this.onTransitionIn.bind(this, 'onEntering')}
                     onEntered={this.onTransitionIn.bind(this, 'onEntered')}
 
-                    onExit={this.onTransitionChange.bind(this, 'onExit')}
-                    onExiting={this.onTransitionChange.bind(this, 'onExiting')}
-                    onExited={this.onTransitionChange.bind(this, 'onExited')}
+                    onExit={this.onTransitionOut.bind(this, 'onExit')}
+                    onExiting={this.onTransitionOut.bind(this, 'onExiting')}
+                    onExited={this.onTransitionOut.bind(this, 'onExited')}
 
                     unmountOnExit={unmountOnExit}
                     mountOnEnter={mountOnEnter}
