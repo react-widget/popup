@@ -11,11 +11,11 @@
         "bplokjs-position": "^1.0.0",
         "classnames": "^2.2.6",
         "dom-helpers": "^3.4.0",
+        "object.omit": "^3.0.0",
         "prop-types": "^15.6.2",
         "react": "^16.5.2",
         "react-dom": "^16.5.2",
         "react-widget-transition": "^1.0.2",
-        "object.omit": "^3.0.0",
         "warning": "^4.0.2"
     },
     "devDependencies": {
