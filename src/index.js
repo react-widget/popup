@@ -483,7 +483,6 @@ class Popup extends React.Component {
                     appear
                 >
                     <PopupComponent
-                        tabIndex={-1}
                         {...omit(others, Object.keys(propTypes))}
                         ref={this.refPopup}
                         className={cls}
