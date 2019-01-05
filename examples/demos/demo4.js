@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import Popup from '../../lib';
+import Popup from '../../src';
 
 function Test() {
     return <a>Test a</a>;

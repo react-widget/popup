@@ -325,7 +325,7 @@ var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/run
 
 var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 
-var _lib = _interopRequireDefault(__webpack_require__(/*! ../../lib */ "./lib/index.js"));
+var _src = _interopRequireDefault(__webpack_require__(/*! ../../src */ "./src/index.js"));
 
 var _jquery = _interopRequireDefault(__webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js"));
 
@@ -402,7 +402,7 @@ function (_Component) {
           position: "relative",
           border: "1px solid #000"
         }
-      }, _react.default.createElement(_lib.default, {
+      }, _react.default.createElement(_src.default, {
         visible: visible,
         mask: mask,
         resetPositionOnUpdate: true,
@@ -479,7 +479,7 @@ var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/run
 
 var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 
-var _lib = _interopRequireDefault(__webpack_require__(/*! ../../lib */ "./lib/index.js"));
+var _src = _interopRequireDefault(__webpack_require__(/*! ../../src */ "./src/index.js"));
 
 var i = 1;
 
@@ -586,7 +586,7 @@ function (_Component) {
           position: "relative",
           border: "1px solid #000"
         }
-      }, _react.default.createElement(_lib.default, {
+      }, _react.default.createElement(_src.default, {
         visible: visible,
         mask: mask,
         unmountOnExit: false,
@@ -667,7 +667,7 @@ var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/run
 
 var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 
-var _lib = _interopRequireDefault(__webpack_require__(/*! ../../lib */ "./lib/index.js"));
+var _src = _interopRequireDefault(__webpack_require__(/*! ../../src */ "./src/index.js"));
 
 function Test() {
   return _react.default.createElement("a", null, "Test a");
@@ -766,7 +766,7 @@ function (_Component) {
           position: "relative",
           border: "1px solid #000"
         }
-      }, _react.default.createElement(_lib.default, {
+      }, _react.default.createElement(_src.default, {
         visible: visible,
         mask: mask,
         unmountOnExit: true,
@@ -853,7 +853,7 @@ var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/run
 
 var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 
-var _lib = _interopRequireDefault(__webpack_require__(/*! ../../lib */ "./lib/index.js"));
+var _src = _interopRequireDefault(__webpack_require__(/*! ../../src */ "./src/index.js"));
 
 var _jquery = _interopRequireDefault(__webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js"));
 
@@ -928,7 +928,7 @@ function (_Component) {
         }
       }, _react.default.createElement("button", {
         onClick: this.toggleClick
-      }, visible ? '关闭' : '显示'), _react.default.createElement(_lib.default, {
+      }, visible ? '关闭' : '显示'), _react.default.createElement(_src.default, {
         visible: visible,
         resetPositionOnUpdate: true
       }, _react.default.createElement("div", {
@@ -936,7 +936,7 @@ function (_Component) {
       }, "center...")), _react.default.createElement("button", {
         onClick: this.toggleClick,
         ref: this.refButton
-      }, "trigger"), _react.default.createElement(_lib.default, {
+      }, "trigger"), _react.default.createElement(_src.default, {
         visible: visible,
         placement: this._defer
       }, _react.default.createElement("div", {
@@ -944,7 +944,7 @@ function (_Component) {
       }, "trigger1...")), _react.default.createElement("button", {
         onClick: this.toggleClick,
         ref: this.refButton2
-      }, "animate"), _react.default.createElement(_lib.default, {
+      }, "animate"), _react.default.createElement(_src.default, {
         visible: visible,
         placement: this._defer2,
         timeout: 500,
@@ -963,7 +963,7 @@ function (_Component) {
         }
       }, _react.default.createElement("div", {
         className: "dialog"
-      }, "trigger2...", _react.default.createElement(Test, null))), _react.default.createElement(_lib.default, {
+      }, "trigger2...", _react.default.createElement(Test, null))), _react.default.createElement(_src.default, {
         visible: visible,
         resetPositionOnUpdate: true,
         style: {
@@ -1001,7 +1001,7 @@ __webpack_require__(/*! ./style/index.scss */ "./examples/style/index.scss");
 
 __webpack_require__(/*! ./style/animate.scss */ "./examples/style/animate.scss");
 
-__webpack_require__(/*! ../lib/style/index.css */ "./lib/style/index.css");
+__webpack_require__(/*! ../src/style/index.scss */ "./src/style/index.scss");
 
 var _Demo = _interopRequireDefault(__webpack_require__(/*! ./Demo */ "./examples/Demo.js"));
 
@@ -1031,9 +1031,9 @@ _reactDom.default.render(_react.default.createElement(_Demo.default, null), demo
 
 /***/ }),
 
-/***/ "./lib/CSSTransition.js":
+/***/ "./src/CSSTransition.js":
 /*!******************************!*\
-  !*** ./lib/CSSTransition.js ***!
+  !*** ./src/CSSTransition.js ***!
   \******************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -1050,11 +1050,11 @@ exports.default = void 0;
 
 var _addClass = _interopRequireDefault(__webpack_require__(/*! dom-helpers/class/addClass */ "./node_modules/dom-helpers/class/addClass.js"));
 
-var _removeClass = _interopRequireDefault(__webpack_require__(/*! dom-helpers/class/removeClass */ "./node_modules/dom-helpers/class/removeClass.js")); ///////////////////////////////////////////////////////////////////
+var _removeClass = _interopRequireDefault(__webpack_require__(/*! dom-helpers/class/removeClass */ "./node_modules/dom-helpers/class/removeClass.js"));
+
+///////////////////////////////////////////////////////////////////
 ////////////part of react-transition-group/CSSTransition///////////
 ///////////////////////////////////////////////////////////////////
-
-
 var addClass = function addClass(node, classes) {
   return node && classes && classes.split(' ').forEach(function (c) {
     return (0, _addClass.default)(node, c);
@@ -1165,9 +1165,9 @@ exports.default = _default;
 
 /***/ }),
 
-/***/ "./lib/index.js":
+/***/ "./src/index.js":
 /*!**********************!*\
-  !*** ./lib/index.js ***!
+  !*** ./src/index.js ***!
   \**********************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -1218,7 +1218,7 @@ var _classnames3 = _interopRequireDefault(__webpack_require__(/*! classnames */ 
 
 var _bplokjsPosition = _interopRequireDefault(__webpack_require__(/*! bplokjs-position */ "./node_modules/bplokjs-position/index.js"));
 
-var _CSSTransition = _interopRequireDefault(__webpack_require__(/*! ./CSSTransition */ "./lib/CSSTransition.js"));
+var _CSSTransition = _interopRequireDefault(__webpack_require__(/*! ./CSSTransition */ "./src/CSSTransition.js"));
 
 var _Transition = _interopRequireDefault(__webpack_require__(/*! react-widget-transition/lib/Transition */ "./node_modules/react-widget-transition/lib/Transition.js"));
 
@@ -1227,6 +1227,10 @@ var _warning = _interopRequireDefault(__webpack_require__(/*! warning */ "./node
 var _object = _interopRequireDefault(__webpack_require__(/*! object.omit */ "./node_modules/object.omit/index.js"));
 
 var _bplokjsDeferred = _interopRequireDefault(__webpack_require__(/*! bplokjs-deferred */ "./node_modules/bplokjs-deferred/index.js"));
+
+var _addClass = _interopRequireDefault(__webpack_require__(/*! dom-helpers/class/addClass */ "./node_modules/dom-helpers/class/addClass.js"));
+
+var _removeClass = _interopRequireDefault(__webpack_require__(/*! dom-helpers/class/removeClass */ "./node_modules/dom-helpers/class/removeClass.js"));
 
 function noop() {}
 
@@ -1279,6 +1283,7 @@ var propTypes = {
   maskProps: _propTypes.default.object,
   placement: _propTypes.default.any,
   // object func
+  setDirectionClassName: _propTypes.default.bool,
   //translaton
   timeout: _propTypes.default.any,
   addEndListener: _propTypes.default.func,
@@ -1353,6 +1358,13 @@ function (_React$Component) {
         of = of(popup);
       }
 
+      var directionMap = {
+        'left': 'right',
+        'right': 'top',
+        'bottom': 'top',
+        'top': 'bottom',
+        'center': 'center'
+      };
       var config = {
         of: of,
         using: function using(pos, feedback) {
@@ -1360,6 +1372,8 @@ function (_React$Component) {
             _using(pos, feedback);
           }
 
+          console.log(feedback);
+          result.direction = directionMap[feedback[feedback.important]];
           result.pos = pos;
           result.feedback = feedback;
         }
@@ -1388,22 +1402,34 @@ function (_React$Component) {
     key: "setPosition",
     value: function setPosition() {
       var pos = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      var direction = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
       var popup = this.getPopupDOM();
 
+      if (this.props.setDirectionClassName) {
+        (0, _removeClass.default)(popup, "".concat(this.props.prefixCls, "-direction-top"));
+        (0, _removeClass.default)(popup, "".concat(this.props.prefixCls, "-direction-bottom"));
+        (0, _removeClass.default)(popup, "".concat(this.props.prefixCls, "-direction-left"));
+        (0, _removeClass.default)(popup, "".concat(this.props.prefixCls, "-direction-right"));
+
+        if (direction) {
+          (0, _addClass.default)(popup, "".concat(this.props.prefixCls, "-direction-").concat(direction));
+        }
+      }
+
       if ('left' in pos) {
-        popup.style.left = ~~pos.left + 'px';
+        popup.style.left = pos.left.toFixed() + 'px';
       }
 
       if ('top' in pos) {
-        popup.style.top = ~~pos.top + 'px';
+        popup.style.top = pos.top.toFixed() + 'px';
       }
 
       if ('right' in pos) {
-        popup.style.right = ~~pos.right + 'px';
+        popup.style.right = pos.right.toFixed() + 'px';
       }
 
       if ('bottom' in pos) {
-        popup.style.bottom = ~~pos.bottom + 'px';
+        popup.style.bottom = pos.bottom.toFixed() + 'px';
       }
     }
     /**
@@ -1432,7 +1458,7 @@ function (_React$Component) {
             } else {
               var _position = _this2.getPosition(opts);
 
-              _this2.setPosition(_position.pos);
+              _this2.setPosition(_position.pos, _position.direction);
             }
 
             _this2._hasSetPosition = true;
@@ -1625,9 +1651,7 @@ function (_React$Component) {
         enter: true,
         exit: true,
         appear: true
-      }, _react.default.createElement(PopupComponent, (0, _extends2.default)({
-        tabIndex: -1
-      }, (0, _object.default)(others, (0, _keys.default)(propTypes)), {
+      }, _react.default.createElement(PopupComponent, (0, _extends2.default)({}, (0, _object.default)(others, (0, _keys.default)(propTypes)), {
         ref: this.refPopup,
         className: cls
       }), children)));
@@ -1702,6 +1726,7 @@ function (_React$Component) {
   mountOnEnter: true,
   unmountOnExit: true,
   // destroyOnHide
+  setDirectionClassName: true,
   mask: false,
   fixed: false,
   // 禁用每次刷新更新位置
@@ -1715,11 +1740,11 @@ function (_React$Component) {
     of: window,
     collision: 'flip' // none flip fit flipfit
 
-    /**
-     * onEnter onEntering onEntered在updatePosition执行
-     */
-
   }
+  /**
+   * onEnter onEntering onEntered在updatePosition执行
+   */
+
 });
 (0, _assign.default)(Popup.prototype, _CSSTransition.default);
 var _default = Popup;
@@ -1727,10 +1752,10 @@ exports.default = _default;
 
 /***/ }),
 
-/***/ "./lib/style/index.css":
-/*!*****************************!*\
-  !*** ./lib/style/index.css ***!
-  \*****************************/
+/***/ "./src/style/index.scss":
+/*!******************************!*\
+  !*** ./src/style/index.scss ***!
+  \******************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1753,4 +1778,4 @@ module.exports = __webpack_require__(/*! D:\wamp\www\github-projects\react-widge
 /***/ })
 
 /******/ });
-//# sourceMappingURL=index.a624ed37.js.map
+//# sourceMappingURL=index.af8d13d9.js.map

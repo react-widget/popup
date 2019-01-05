@@ -602,24 +602,23 @@ module.exports = function () {
 "use strict";
 
 
-let size;
+
+var size;
 
 module.exports = function scrollbarSize(recalc) {
-    if (!size && size !== 0 || recalc) {
-        const scrollDiv = document.createElement('div');
+  if (!size && size !== 0 || recalc) {
+    var scrollDiv = document.createElement('div');
+    scrollDiv.style.position = 'absolute';
+    scrollDiv.style.top = '-9999px';
+    scrollDiv.style.width = '50px';
+    scrollDiv.style.height = '50px';
+    scrollDiv.style.overflow = 'scroll';
+    document.body.appendChild(scrollDiv);
+    size = scrollDiv.offsetWidth - scrollDiv.clientWidth;
+    document.body.removeChild(scrollDiv);
+  }
 
-        scrollDiv.style.position = 'absolute';
-        scrollDiv.style.top = '-9999px';
-        scrollDiv.style.width = '50px';
-        scrollDiv.style.height = '50px';
-        scrollDiv.style.overflow = 'scroll';
-
-        document.body.appendChild(scrollDiv);
-        size = scrollDiv.offsetWidth - scrollDiv.clientWidth;
-        document.body.removeChild(scrollDiv);
-    }
-
-    return size;
+  return size;
 };
 
 /***/ }),
@@ -40716,4 +40715,4 @@ if (!self.fetch) {
 /***/ })
 
 }]);
-//# sourceMappingURL=vendors.23b7fc8d.chunk.js.map
+//# sourceMappingURL=vendors.ac105446.chunk.js.map

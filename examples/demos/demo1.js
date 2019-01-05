@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Popup from '../../lib';
+import Popup from '../../src';
 import $ from 'jquery'
 import Deferred from 'bplokjs-deferred'
 

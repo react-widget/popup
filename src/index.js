@@ -8,6 +8,8 @@ import Transition from 'react-widget-transition/lib/Transition';
 import warning from 'warning';
 import omit from 'object.omit';
 import Deferred from 'bplokjs-deferred'
+import addOneClass from 'dom-helpers/class/addClass';
+import removeOneClass from 'dom-helpers/class/removeClass';
 
 function noop() { }
 
@@ -67,6 +69,8 @@ const propTypes = {
 
     placement: PropTypes.any,// object func
 
+    setDirectionClassName: PropTypes.bool,
+
     //translaton
     timeout: PropTypes.any,
     addEndListener: PropTypes.func,
@@ -100,6 +104,7 @@ class Popup extends React.Component {
         maskComponent: 'div',
         mountOnEnter: true,
         unmountOnExit: true, // destroyOnHide
+        setDirectionClassName: true,
         mask: false,
         fixed: false,
         // 禁用每次刷新更新位置
@@ -188,13 +193,22 @@ class Popup extends React.Component {
             of = of(popup);
         }
 
+        const directionMap = {
+            'left': 'right',
+            'right': 'top',
+            'bottom': 'top',
+            'top': 'bottom',
+            'center': 'center',
+        };
+
         const config = {
             of,
             using: function (pos, feedback) {
                 if (using) {
                     using(pos, feedback);
                 }
-
+                console.log(feedback)
+                result.direction = directionMap[feedback[feedback.important]];
                 result.pos = pos;
                 result.feedback = feedback;
             }
@@ -218,8 +232,19 @@ class Popup extends React.Component {
         return result;
     }
 
-    setPosition(pos = {}) {
+    setPosition(pos = {}, direction = '') {
         const popup = this.getPopupDOM();
+
+        if (this.props.setDirectionClassName) {
+            removeOneClass(popup, `${this.props.prefixCls}-direction-top`);
+            removeOneClass(popup, `${this.props.prefixCls}-direction-bottom`);
+            removeOneClass(popup, `${this.props.prefixCls}-direction-left`);
+            removeOneClass(popup, `${this.props.prefixCls}-direction-right`);
+
+            if (direction) {
+                addOneClass(popup, `${this.props.prefixCls}-direction-${direction}`);
+            }
+        }
 
         if ('left' in pos) {
             popup.style.left = pos.left.toFixed() + 'px';
@@ -257,7 +282,7 @@ class Popup extends React.Component {
                         opts(this.getPopupDOM());
                     } else {
                         const position = this.getPosition(opts);
-                        this.setPosition(position.pos);
+                        this.setPosition(position.pos, position.direction);
                     }
                     this._hasSetPosition = true;
                 }
