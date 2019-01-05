@@ -193,6 +193,13 @@ class Popup extends React.Component {
             of = of(popup);
         }
 
+        if (Array.isArray(of)) {
+            of = {
+                pageX: of[0],
+                pageY: of[1],
+            }
+        }
+
         const directionMap = {
             'left': 'right',
             'right': 'top',
