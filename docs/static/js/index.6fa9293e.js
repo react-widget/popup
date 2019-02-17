@@ -1194,6 +1194,8 @@ var _objectWithoutProperties2 = _interopRequireDefault(__webpack_require__(/*! @
 
 var _extends2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/extends */ "./node_modules/@babel/runtime-corejs2/helpers/extends.js"));
 
+var _isArray = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/array/is-array */ "./node_modules/@babel/runtime-corejs2/core-js/array/is-array.js"));
+
 var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "./node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
 
 var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "./node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
@@ -1358,6 +1360,13 @@ function (_React$Component) {
         of = of(popup);
       }
 
+      if ((0, _isArray.default)(of)) {
+        of = {
+          pageX: of[0],
+          pageY: of[1]
+        };
+      }
+
       var directionMap = {
         'left': 'right',
         'right': 'top',
@@ -1372,7 +1381,6 @@ function (_React$Component) {
             _using(pos, feedback);
           }
 
-          console.log(feedback);
           result.direction = directionMap[feedback[feedback.important]];
           result.pos = pos;
           result.feedback = feedback;
@@ -1414,22 +1422,23 @@ function (_React$Component) {
         if (direction) {
           (0, _addClass.default)(popup, "".concat(this.props.prefixCls, "-direction-").concat(direction));
         }
-      }
+      } //.toFixed()
+
 
       if ('left' in pos) {
-        popup.style.left = pos.left.toFixed() + 'px';
+        popup.style.left = ~~pos.left + 'px';
       }
 
       if ('top' in pos) {
-        popup.style.top = pos.top.toFixed() + 'px';
+        popup.style.top = ~~pos.top + 'px';
       }
 
       if ('right' in pos) {
-        popup.style.right = pos.right.toFixed() + 'px';
+        popup.style.right = ~~pos.right + 'px';
       }
 
       if ('bottom' in pos) {
-        popup.style.bottom = pos.bottom.toFixed() + 'px';
+        popup.style.bottom = ~~pos.bottom + 'px';
       }
     }
     /**
@@ -1778,4 +1787,4 @@ module.exports = __webpack_require__(/*! D:\wamp\www\github-projects\react-widge
 /***/ })
 
 /******/ });
-//# sourceMappingURL=index.af8d13d9.js.map
+//# sourceMappingURL=index.6fa9293e.js.map

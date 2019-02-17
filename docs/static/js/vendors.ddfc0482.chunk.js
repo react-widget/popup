@@ -1,5 +1,16 @@
 (window["webpackJsonp"] = window["webpackJsonp"] || []).push([["vendors"],{
 
+/***/ "./node_modules/@babel/runtime-corejs2/core-js/array/is-array.js":
+/*!***********************************************************************!*\
+  !*** ./node_modules/@babel/runtime-corejs2/core-js/array/is-array.js ***!
+  \***********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(/*! core-js/library/fn/array/is-array */ "./node_modules/core-js/library/fn/array/is-array.js");
+
+/***/ }),
+
 /***/ "./node_modules/@babel/runtime-corejs2/core-js/map.js":
 /*!************************************************************!*\
   !*** ./node_modules/@babel/runtime-corejs2/core-js/map.js ***!
@@ -2785,6 +2796,19 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 
 /***/ }),
 
+/***/ "./node_modules/core-js/library/fn/array/is-array.js":
+/*!***********************************************************!*\
+  !*** ./node_modules/core-js/library/fn/array/is-array.js ***!
+  \***********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(/*! ../../modules/es6.array.is-array */ "./node_modules/core-js/library/modules/es6.array.is-array.js");
+module.exports = __webpack_require__(/*! ../../modules/_core */ "./node_modules/core-js/library/modules/_core.js").Array.isArray;
+
+
+/***/ }),
+
 /***/ "./node_modules/core-js/library/fn/map.js":
 /*!************************************************!*\
   !*** ./node_modules/core-js/library/fn/map.js ***!
@@ -5276,6 +5300,21 @@ module.exports = __webpack_require__(/*! ./_core */ "./node_modules/core-js/libr
     || it['@@iterator']
     || Iterators[classof(it)];
 };
+
+
+/***/ }),
+
+/***/ "./node_modules/core-js/library/modules/es6.array.is-array.js":
+/*!********************************************************************!*\
+  !*** ./node_modules/core-js/library/modules/es6.array.is-array.js ***!
+  \********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// 22.1.2.2 / 15.4.3.2 Array.isArray(arg)
+var $export = __webpack_require__(/*! ./_export */ "./node_modules/core-js/library/modules/_export.js");
+
+$export($export.S, 'Array', { isArray: __webpack_require__(/*! ./_is-array */ "./node_modules/core-js/library/modules/_is-array.js") });
 
 
 /***/ }),
@@ -37312,7 +37351,7 @@ exports.default = Identity;
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "./node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
 exports.default = void 0;
 
@@ -37339,76 +37378,77 @@ var _Transition = _interopRequireDefault(__webpack_require__(/*! react-transitio
 var _Identity = _interopRequireDefault(__webpack_require__(/*! ./Identity */ "./node_modules/react-widget-transition/lib/Identity.js"));
 
 var ReactWidgetTransition =
-    /*#__PURE__*/
-    function (_React$Component) {
-        (0, _inherits2.default)(ReactWidgetTransition, _React$Component);
+/*#__PURE__*/
+function (_React$Component) {
+  (0, _inherits2.default)(ReactWidgetTransition, _React$Component);
 
-        function ReactWidgetTransition() {
-            (0, _classCallCheck2.default)(this, ReactWidgetTransition);
-            return (0, _possibleConstructorReturn2.default)(this, (0, _getPrototypeOf2.default)(ReactWidgetTransition).apply(this, arguments));
-        }
+  function ReactWidgetTransition() {
+    (0, _classCallCheck2.default)(this, ReactWidgetTransition);
+    return (0, _possibleConstructorReturn2.default)(this, (0, _getPrototypeOf2.default)(ReactWidgetTransition).apply(this, arguments));
+  }
 
-        (0, _createClass2.default)(ReactWidgetTransition, [{
-            key: "render",
-            value: function render() {
-                var props = this.props;
-                var rest = {};
+  (0, _createClass2.default)(ReactWidgetTransition, [{
+    key: "render",
+    value: function render() {
+      var props = this.props;
+      var rest = {};
 
-                if (typeof props.children !== 'function') {
-                    var shouldUpdate = true;
+      if (typeof props.children !== 'function') {
+        var shouldUpdate = true;
 
-                    rest.onEnter = function () {
-                        shouldUpdate = false;
+        rest.onEnter = function () {
+          shouldUpdate = false;
 
-                        if (props.onEnter) {
-                            props.onEnter.apply(props, arguments);
-                        }
-                    };
+          if (props.onEnter) {
+            props.onEnter.apply(props, arguments);
+          }
+        };
 
-                    rest.onEntered = function () {
-                        shouldUpdate = true;
+        rest.onEntered = function () {
+          shouldUpdate = true;
 
-                        if (props.onEntered) {
-                            props.onEntered.apply(props, arguments);
-                        }
-                    };
+          if (props.onEntered) {
+            props.onEntered.apply(props, arguments);
+          }
+        };
 
-                    rest.onExit = function () {
-                        shouldUpdate = false;
+        rest.onExit = function () {
+          shouldUpdate = false;
 
-                        if (props.onExit) {
-                            props.onExit.apply(props, arguments);
-                        }
-                    };
+          if (props.onExit) {
+            props.onExit.apply(props, arguments);
+          }
+        };
 
-                    rest.onExited = function () {
-                        shouldUpdate = true;
+        rest.onExited = function () {
+          shouldUpdate = true;
 
-                        if (props.onExited) {
-                            props.onExited.apply(props, arguments);
-                        }
-                    };
+          if (props.onExited) {
+            props.onExited.apply(props, arguments);
+          }
+        };
 
-                    rest.children = function ()
-        /*state*/ {
-                        return _react.default.createElement(_Identity.default, {
-                            shouldUpdate: shouldUpdate
-                        }, props.children);
-                    };
-                }
+        rest.children = function ()
+        /*state*/
+        {
+          return _react.default.createElement(_Identity.default, {
+            shouldUpdate: shouldUpdate
+          }, props.children);
+        };
+      }
 
-                return _react.default.createElement(_Transition.default, (0, _extends2.default)({}, props, rest));
-            }
-        }]);
-        return ReactWidgetTransition;
-    }(_react.default.Component);
+      return _react.default.createElement(_Transition.default, (0, _extends2.default)({}, props, rest));
+    }
+  }]);
+  return ReactWidgetTransition;
+}(_react.default.Component);
 
 exports.default = ReactWidgetTransition;
 (0, _defineProperty2.default)(ReactWidgetTransition, "propTypes", {
-    onEnter: _propTypes.default.func,
-    onEntered: _propTypes.default.func,
-    onExit: _propTypes.default.func,
-    onExited: _propTypes.default.func
+  onEnter: _propTypes.default.func,
+  onEntered: _propTypes.default.func,
+  onExit: _propTypes.default.func,
+  onExited: _propTypes.default.func
 });
 
 /***/ }),
@@ -40715,4 +40755,4 @@ if (!self.fetch) {
 /***/ })
 
 }]);
-//# sourceMappingURL=vendors.ac105446.chunk.js.map
+//# sourceMappingURL=vendors.ddfc0482.chunk.js.map

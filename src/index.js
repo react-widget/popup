@@ -214,7 +214,7 @@ class Popup extends React.Component {
                 if (using) {
                     using(pos, feedback);
                 }
-                console.log(feedback)
+
                 result.direction = directionMap[feedback[feedback.important]];
                 result.pos = pos;
                 result.feedback = feedback;
@@ -252,18 +252,18 @@ class Popup extends React.Component {
                 addOneClass(popup, `${this.props.prefixCls}-direction-${direction}`);
             }
         }
-
+        //.toFixed()
         if ('left' in pos) {
-            popup.style.left = pos.left.toFixed() + 'px';
+            popup.style.left = ~~pos.left + 'px';
         }
         if ('top' in pos) {
-            popup.style.top = pos.top.toFixed() + 'px';
+            popup.style.top = ~~pos.top + 'px';
         }
         if ('right' in pos) {
-            popup.style.right = pos.right.toFixed() + 'px';
+            popup.style.right = ~~pos.right + 'px';
         }
         if ('bottom' in pos) {
-            popup.style.bottom = pos.bottom.toFixed() + 'px';
+            popup.style.bottom = ~~pos.bottom + 'px';
         }
     }
     /**
