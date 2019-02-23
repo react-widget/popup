@@ -1422,23 +1422,23 @@ function (_React$Component) {
         if (direction) {
           (0, _addClass.default)(popup, "".concat(this.props.prefixCls, "-direction-").concat(direction));
         }
-      } //.toFixed()
+      } //~~ .toFixed()
 
 
       if ('left' in pos) {
-        popup.style.left = ~~pos.left + 'px';
+        popup.style.left = pos.left.toFixed() + 'px';
       }
 
       if ('top' in pos) {
-        popup.style.top = ~~pos.top + 'px';
+        popup.style.top = pos.top.toFixed() + 'px';
       }
 
       if ('right' in pos) {
-        popup.style.right = ~~pos.right + 'px';
+        popup.style.right = pos.right.toFixed() + 'px';
       }
 
       if ('bottom' in pos) {
-        popup.style.bottom = ~~pos.bottom + 'px';
+        popup.style.bottom = pos.bottom.toFixed() + 'px';
       }
     }
     /**
@@ -1787,4 +1787,4 @@ module.exports = __webpack_require__(/*! D:\wamp\www\github-projects\react-widge
 /***/ })
 
 /******/ });
-//# sourceMappingURL=index.6fa9293e.js.map
+//# sourceMappingURL=index.2ce5c93a.js.map
