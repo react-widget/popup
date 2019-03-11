@@ -40,11 +40,11 @@ render(){
 | popupComponent | popup组件类 | React.Element | div |
 | maskComponent | 遮罩层组件类 | React.Element | div |
 | maskProps | 遮罩层组件属性 | object | - |
-| placement | 组件显示位置规则,参考`https://api.jqueryui.com/position/` | Promise()=>PlacementObject\|PlacementObject\|Function=>PlacementObject | {of:window} |
+| placement | 组件显示位置规则,参考`https://api.jqueryui.com/position/` | Promise()=>PlacementObject<br/>PlacementObject<br/>Function=>PlacementObject | {of:window} |
 | setDirectionClassName | 是否设置方位样式`rw-popup-direction-top|left|right|bottom` | boolean | true |
 | transitionComponent | 动画组件 | React.Element | Transition |
-| mountOnEnter | 不开启时，如果visible=false时则不渲染，可以理解为lazyMount | boolean | false |
-| unmountOnExit | 开始后visible=false时不渲染，可以理解为 destroyOnHide | boolean | false |
+| mountOnEnter | 参考`react-transition-group` | boolean | true |
+| unmountOnExit | 参考`react-transition-group` | boolean | true |
 | timeout | 参考`react-transition-group` | - | - |
 | addEndListener | 参考`react-transition-group` | - | - |
 | addMaskEndListener | 参考`react-transition-group` | - | - |
