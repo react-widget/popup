@@ -40,7 +40,7 @@ render(){
 | popupComponent | popup组件类 | React.Element | div |
 | maskComponent | 遮罩层组件类 | React.Element | div |
 | maskProps | 遮罩层组件属性 | object | - |
-| placement | 组件显示位置规则,参考`https://api.jqueryui.com/position/` | Promise()=>PlacementObject<br/>PlacementObject<br/>Function=>PlacementObject | {of:window} |
+| placement | 组件显示位置规则,参考`https://api.jqueryui.com/position/` | Promise()=>PlacementObject<br/>PlacementObject<br/>Function(DOM) | {of:window} |
 | setDirectionClassName | 是否设置方位样式`rw-popup-direction-top|left|right|bottom` | boolean | true |
 | transitionComponent | 动画组件 | React.Element | Transition |
 | mountOnEnter | 参考`react-transition-group` | boolean | true |
