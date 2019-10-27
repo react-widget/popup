@@ -58,7 +58,7 @@ export default class DEMO extends Component {
     _defer2 = Deferred();
 
     componentDidMount() {
-        // setTimeout(this.forceUpdate.bind(this), 1000);
+        // setInterval(this.forceUpdate.bind(this), 1000);
     }
 
     render() {
@@ -73,16 +73,30 @@ export default class DEMO extends Component {
                 <button onClick={this.toggleClick}>
                     {visible ? "关闭" : "显示"}
                 </button>
-                <Popup visible={visible} position={[10, 10]}>
-                    <div className="dialog">
+                <Popup
+                    visible={visible}
+                    position={[10, 10]}
+                    unmountOnExit={false}
+                >
+                    {/* <div className="dialog">
                         center...
                         <div>
                             <Test />
                         </div>
-                    </div>
-
-                    <Test />
-                    <Test />
+                    </div> */}
+                    {status => (
+                        console.log(status),
+                        (
+                            <>
+                                <div className="dialog">
+                                    center...
+                                    <div>
+                                        <Test />
+                                    </div>
+                                </div>
+                            </>
+                        )
+                    )}
                 </Popup>
             </div>
         );
