@@ -9,7 +9,6 @@ class T1 extends React.Component {
     }
 
     componentDidUpdate(prevProps) {
-        console.log(prevProps === this.props);
         if (this.props !== prevProps) {
             console.log("componentDidUpdateA");
             return;
@@ -17,12 +16,12 @@ class T1 extends React.Component {
     }
 
     render() {
-        return null;
+        return this.props.children;
     }
 }
 
 function Test() {
-    console.log(1);
+    console.log("Test Render");
     return null;
 }
 
@@ -68,15 +67,22 @@ export default class DEMO extends Component {
 
         return (
             <div>
-                <T1 a={1} />
+                {/* <T1>
+                    <Test />
+                </T1> */}
                 <button onClick={this.toggleClick}>
                     {visible ? "关闭" : "显示"}
                 </button>
                 <Popup visible={visible} position={[10, 10]}>
                     <div className="dialog">
                         center...
-                        <Test />
+                        <div>
+                            <Test />
+                        </div>
                     </div>
+
+                    <Test />
+                    <Test />
                 </Popup>
             </div>
         );
