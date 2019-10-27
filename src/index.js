@@ -53,6 +53,8 @@ const propTypes = {
     maskTransitionClassNames: classNamesShape,
 
     mask: PropTypes.bool,
+    maskClassName: PropTypes.string,
+    maskStyle: PropTypes.object,
     visible: PropTypes.bool,
     fixed: PropTypes.bool,
     mountOnEnter: PropTypes.bool,
@@ -67,6 +69,7 @@ const propTypes = {
     maskComponent: PropTypes.any,
     maskProps: PropTypes.object,
 
+    position: PropTypes.array,
     placement: PropTypes.any, // object func
 
     setDirectionClassName: PropTypes.bool,
@@ -92,12 +95,9 @@ const propTypes = {
 class Popup extends React.Component {
     static propTypes = propTypes;
 
-    static childContextTypes = {
-        transitionGroup: () => {}
-    };
-
     static defaultProps = {
         prefixCls: "nex-popup",
+        style: {},
         rootComponent: Fragment,
         popupComponent: "div",
         transitionComponent: Transition,
@@ -106,6 +106,7 @@ class Popup extends React.Component {
         unmountOnExit: true, // destroyOnHide
         setDirectionClassName: true,
         mask: false,
+        maskStyle: {},
         fixed: false,
         // 禁用每次刷新更新位置
         resetPositionOnUpdate: true,
@@ -114,6 +115,7 @@ class Popup extends React.Component {
         visible: true,
         addEndListener: noop,
         addMaskEndListener: noop,
+        position: [0, 0],
         placement: {
             of: window,
             collision: "flip" // none flip fit flipfit
@@ -170,6 +172,8 @@ class Popup extends React.Component {
         };
     }
 
+    _isInit = true;
+
     state = {
         shouldComponentUpdate: false,
         before: null,
@@ -178,10 +182,6 @@ class Popup extends React.Component {
     };
 
     _hasSetPosition = false;
-
-    getChildContext() {
-        return { transitionGroup: null };
-    }
 
     getPosition(opts) {
         const result = {};
@@ -304,23 +304,30 @@ class Popup extends React.Component {
         return nextState.shouldComponentUpdate;
     }
 
+    shouldHide() {
+        const { visible, mountOnEnter } = this.props;
+        return !visible && !mountOnEnter;
+    }
+
     componentDidMount() {
-        const props = this.props;
+        this._isInit = false;
 
-        if (!props.visible && !props.mountOnEnter) {
-            const popupDOM = this.getPopupDOM();
-            const popupMaskDOM = this.getPopupMaskDOM();
+        // const props = this.props;
 
-            popupDOM && (popupDOM.style.display = "none");
+        // if (!props.visible && !props.mountOnEnter) {
+        //     const popupDOM = this.getPopupDOM();
+        //     const popupMaskDOM = this.getPopupMaskDOM();
 
-            popupMaskDOM && (popupMaskDOM.style.display = "none");
-        }
+        //     popupDOM && (popupDOM.style.display = "none");
 
-        this.updatePosition();
+        //     popupMaskDOM && (popupMaskDOM.style.display = "none");
+        // }
+
+        // this.updatePosition();
     }
 
     componentDidUpdate() {
-        this.updatePosition();
+        // this.updatePosition();
     }
 
     componentWillUnmount() {}
@@ -421,6 +428,8 @@ class Popup extends React.Component {
         const {
             prefixCls,
             mask,
+            maskClassName,
+            maskStyle,
             visible,
             unmountOnExit,
             mountOnEnter,
@@ -435,8 +444,14 @@ class Popup extends React.Component {
         const cls = classnames({
             [`${prefixCls}-mask`]: true,
             [`${prefixCls}-mask-fixed`]: fixed,
-            [maskProps.className]: maskProps.className
+            [maskClassName]: maskClassName
         });
+
+        const mStyle = {};
+
+        if (this.shouldHide()) {
+            mStyle.display = "none";
+        }
 
         return (
             <Transition
@@ -463,6 +478,10 @@ class Popup extends React.Component {
                     {...maskProps}
                     ref={this.refPopupMask}
                     className={cls}
+                    style={{
+                        ...maskStyle,
+                        ...mStyle
+                    }}
                 />
             </Transition>
         );
@@ -470,6 +489,7 @@ class Popup extends React.Component {
 
     render() {
         const {
+            style,
             prefixCls,
             className,
             fixed,
@@ -482,6 +502,7 @@ class Popup extends React.Component {
             rootComponent: RootComponent,
             popupComponent: PopupComponent,
             transitionComponent: Transition,
+            position,
             ...others
         } = this.props;
 
@@ -490,6 +511,17 @@ class Popup extends React.Component {
             [`${prefixCls}-fixed`]: fixed,
             [className]: className
         });
+
+        const pStyle = {
+            left: position[0],
+            top: position[1]
+        };
+
+        if (this.shouldHide()) {
+            pStyle.display = "none";
+        }
+
+        console.log("render...");
 
         return (
             <TransitionGroupContext.Provider value={null}>
@@ -520,6 +552,10 @@ class Popup extends React.Component {
                     >
                         <PopupComponent
                             {...omit(others, Object.keys(propTypes))}
+                            style={{
+                                ...style,
+                                ...pStyle
+                            }}
                             ref={this.refPopup}
                             className={cls}
                         >
