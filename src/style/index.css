@@ -1,9 +1,10 @@
 .nex-popup-root {
-    /*position:absolute;
-	left:0;
-	top:0;
-	right:0;*/
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
 }
+
 .nex-popup {
     position: absolute;
     left: 0;
