@@ -1,6 +1,6 @@
 {
     "name": "react-widget-popup",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "description": "",
     "main": "lib/index.js",
     "dependencies": {
@@ -43,6 +43,7 @@
         "autoprefixer": "^9.7.0",
         "babel-eslint": "^10.0.3",
         "babel-loader": "^8.0.6",
+        "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
         "babel-preset-packez": "^0.4.2",
         "bplokjs-deferred": "^1.0.0",
         "chalk": "^2.4.2",
