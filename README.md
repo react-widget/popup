@@ -1,12 +1,13 @@
 # react-widget-popup
 
 ## 安装
+
 `npm install --save react-widget-popup`
 
 ## 使用
 
-```js
-var Popup = require('react-widget-popup');
+```jsx
+import Popup from 'react-widget-popup';
 
 ...
 
@@ -14,6 +15,10 @@ render(){
     return (
         <Popup
             visible={true}
+            style={{
+                left: 100,
+                top: 100
+            }}
         >
             test
         </Popup>
@@ -24,41 +29,99 @@ render(){
 
 ```
 
-### Popup props
+### propTypes
 
-| 参数 | 说明 | 类型 | 默认值 |
-| --- | --- | --- | --- |
-| prefixCls | 组件CSS样式前缀 | string | rw-popup |
-| className | 组件className属性 | string | - |
-| style | 组件style属性 | React.CSSProperties | - |
-| mask | 是否展示遮罩 | boolean | false |
-| visible | 是否可见 | boolean | true |
-| fixed | 是否使用固定定位 | boolean | false |
-| resetPositionOnUpdate | 每次重新渲染后都会更新计算位置坐标 | boolean | true |
-| resetPositionOnEntered | 动画结束后重新计算位置坐标 | boolean | false |
-| rootComponent | popup容器组件类 | React.Element | React.Fragment |
-| popupComponent | popup组件类 | React.Element | div |
-| maskComponent | 遮罩层组件类 | React.Element | div |
-| maskProps | 遮罩层组件属性 | object | - |
-| placement | 组件显示位置规则,参考`https://api.jqueryui.com/position/` | Promise()=>PlacementObject<br/>PlacementObject<br/>Function(DOM) | {of:window} |
-| setDirectionClassName | 是否设置方位样式`rw-popup-direction-top|left|right|bottom` | boolean | true |
-| transitionComponent | 动画组件 | React.Element | Transition |
-| mountOnEnter | 参考`react-transition-group` | boolean | true |
-| unmountOnExit | 参考`react-transition-group` | boolean | true |
-| timeout | 参考`react-transition-group` | - | - |
-| addEndListener | 参考`react-transition-group` | - | - |
-| addMaskEndListener | 参考`react-transition-group` | - | - |
-| onEnter | 参考`react-transition-group` | - | - |
-| onEntering | 参考`react-transition-group` | - | - |
-| onEntered | 参考`react-transition-group` | - | - |
-| onExit | 参考`react-transition-group` | - | - |
-| onExiting | 参考`react-transition-group` | - | - |
-| onExited | 参考`react-transition-group` | - | - |
-| onMaskEnter | 参考`react-transition-group` | - | - |
-| onMaskEntering | 参考`react-transition-group` | - | - |
-| onMaskEntered | 参考`react-transition-group` | - | - |
-| onMaskExit | 参考`react-transition-group` | - | - |
-| onMaskExiting | 参考`react-transition-group` | - | - |
-| onMaskExited | 参考`react-transition-group` | - | - |
-| transitionClassNames | 参考`react-transition-group` | - | - |
-| maskTransitionClassNames | 参考`react-transition-group` | - | - |
+```ts
+type statusTypes = 'unmounted' | 'exited' | 'entering' | 'entered' | 'exiting' ;
+
+interface PopupProps {
+    children?: React.ReactNode | (status: statusTypes) => React.ReactNode;
+    prefix?: string;
+    style?: React.CSSProperties;
+    className?: string;
+    rootClassName?: string;
+
+    fixed?: boolean;
+    visible?: boolean;
+    lazyMount?: boolean;
+    //http://reactcommunity.org/react-transition-group/css-transition
+    transition?: CSSTransitionProps;
+    destroyOnHide?: boolean;
+
+    mask?: boolean;
+    maskStyle?: React.CSSProperties;
+    maskProps?: {};
+    maskClassName?: string;
+    //http://reactcommunity.org/react-transition-group/css-transition
+    maskTransition?: CSSTransitionProps;
+
+    component?: React.ElementType;
+    maskComponent?: React.ElementType;
+    rootComponent?: React.ElementType;
+
+    // 动画超时时间，建议在transition和maskTransition设置
+    timeout?: CSSTransitionProps.timeout;
+
+    [prop: string]: any;
+}
+```
+
+### defaultProps
+
+```js
+{
+    prefix: "nex-popup",
+    style: {},
+    className: "",
+    rootClassName: "",
+
+    fixed: false,
+    visible: false,
+    lazyMount: true,
+    transition: {},
+    destroyOnHide: true,
+
+    mask: false,
+    maskStyle: {},
+    maskProps: {},
+    maskClassName: "",
+    maskTransition: {},
+
+    component: "div",
+    maskComponent: "div",
+    rootComponent: Fragment
+}
+```
+
+### 基础样式
+
+```css
+.nex-popup-root {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+}
+
+.nex-popup {
+    position: absolute;
+    left: 0;
+    top: 0;
+    outline: 0;
+}
+
+.nex-popup-mask {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background: #000;
+    opacity: 0.1;
+}
+
+.nex-popup-fixed,
+.nex-popup-mask-fixed {
+    position: fixed;
+}
+```

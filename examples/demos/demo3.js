@@ -1,73 +1,56 @@
-import React, { Component, Fragment } from 'react';
-import Popup from '../../src';
+import React, { Component, Fragment } from "react";
+import Popup from "../../src";
 
 let i = 1;
 
 function Test() {
-    console.log('1')
+    console.log("1");
     return <a>Test a{i++}</a>;
 }
 
 const animateClassNames = {
-    "appear": "animated",
-    "appearActive": "fadeBottomIn",
-    "enter": "animated",
-    "enterActive": "fadeBottomIn",
-    "enterDone": "",
-    "exit": "animated",
-    "exitActive": "fadeBottomOut",
-    "exitDone": "",
+    appear: "animated",
+    appearActive: "fadeBottomIn",
+    appearDone: "done",
+    enter: "animated",
+    enterActive: "fadeBottomIn",
+    enterDone: "done",
+    exit: "animated",
+    exitActive: "fadeBottomOut",
+    exitDone: "done"
 };
 
 const maskAnimateClassNames = {
-    "appear": "animated",
-    "appearActive": "fadeIn",
-    "enter": "animated",
-    "enterActive": "fadeIn",
-    "exit": "animated",
-    "exitActive": "fadeOut"
-}
+    appear: "animated",
+    appearActive: "fadeIn",
+    appearDone: "done",
+    enter: "animated",
+    enterActive: "fadeIn",
+    enterDone: "done",
+    exit: "animated",
+    exitActive: "fadeOut",
+    exitDone: "done"
+};
 
 export default class DEMO extends Component {
-
     state = {
         visible: true,
-        mask: true,
-    }
+        mask: true
+    };
 
     toggleClick = e => {
         const { visible } = this.state;
         this.setState({
             visible: !visible
         });
-    }
+    };
 
     toggleClick2 = e => {
         const { mask } = this.state;
         this.setState({
             mask: !mask
         });
-    }
-
-    refButton = (dom) => {
-        this._defer.resolve({
-            of: dom,
-            my: 'left top',
-            at: 'left bottom'
-        });
-    }
-
-    refButton2 = (dom) => {
-        this._defer2.resolve({
-            of: dom,
-            my: 'left center',
-            at: 'right center'
-        });
-    }
-
-    componentDidMount() {
-        setInterval(this.forceUpdate.bind(this), 1000)
-    }
+    };
 
     render() {
         const { visible, mask } = this.state;
@@ -75,52 +58,47 @@ export default class DEMO extends Component {
         return (
             <Fragment>
                 <div>
-                    <button onClick={this.toggleClick}>{visible ? '关闭' : '显示'}</button>
-                    <button onClick={this.toggleClick2}>{mask ? '关闭遮罩层' : '显示遮罩层'}</button>
+                    <button onClick={this.toggleClick}>
+                        {visible ? "关闭" : "显示"}
+                    </button>
+                    <button onClick={this.toggleClick2}>
+                        {mask ? "关闭遮罩层" : "显示遮罩层"}
+                    </button>
                     <button onClick={() => this.forceUpdate()}>refresh</button>
                 </div>
-                <div style={{
-                    height: "calc(100% - 30px)",
-                    position: "relative",
-                    border: "1px solid #000"
-                }}>
+                <div
+                    style={{
+                        height: "calc(100% - 30px)",
+                        position: "relative",
+                        border: "1px solid #000"
+                    }}
+                >
                     <Popup
                         visible={visible}
                         mask={mask}
-                        unmountOnExit={false}
-                        resetPositionOnUpdate
-
+                        destroyOnHide={false}
                         style={{
-                            background: '#ff5454',
-                            color: '#FFF',
+                            left: 10,
+                            top: 10,
+                            background: "#ff5454",
+                            color: "#FFF",
                             padding: 10
                         }}
-                        onEnter={() => console.log('onEnter')}
-                        onEntering={() => console.log('onEntering')}
-                        onEntered={() => console.log('onEntered')}
-                        onExit={() => console.log('Popup onExit')}
-                        onExiting={() => console.log('Popup onExiting')}
-                        onExited={() => console.log('Popup onExited')}
-
-
-
                         timeout={300}
-                        transitionClassNames={animateClassNames}
-                        maskTransitionClassNames={maskAnimateClassNames}
-
-                        placement={{
-                            of(el) {
-                                return el.parentElement;
-                            }
+                        transition={{
+                            classNames: animateClassNames
+                        }}
+                        maskTransition={{
+                            classNames: maskAnimateClassNames
                         }}
                     >
                         <div>
-                            center2...<Test />
+                            center2...
+                            <Test />
                         </div>
                     </Popup>
                 </div>
             </Fragment>
         );
     }
-
 }

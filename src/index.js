@@ -15,7 +15,7 @@ class Popup extends React.Component {
     }
 
     shouldHide() {
-        const { visible, lazyMount } = this.props;
+        const { lazyMount, visible } = this.props;
         return !visible && !lazyMount;
     }
 
@@ -63,12 +63,12 @@ class Popup extends React.Component {
     renderPopupMask() {
         const {
             prefix,
-            maskTransition,
+            visible,
             mask,
             maskProps,
-            maskClassName,
             maskStyle,
-            visible,
+            maskClassName,
+            maskTransition,
             lazyMount,
             destroyOnHide,
             fixed,
@@ -96,7 +96,7 @@ class Popup extends React.Component {
                 appear
                 classNames={{}}
                 timeout={timeout}
-                addEndListener={(_, cb) => cb()}
+                addEndListener={(_, cb) => timeout == null && cb()}
                 {...maskTransition}
                 in={mask && visible}
                 onEnter={this.onEnter.bind(this, maskTransition)}
@@ -124,13 +124,13 @@ class Popup extends React.Component {
             className,
             fixed,
             timeout,
-            children,
             visible,
+            children,
             lazyMount,
             destroyOnHide,
-            popupRootClassName,
-            popupRootComponent: PopupRootComponent,
-            popupComponent: PopupComponent,
+            rootClassName,
+            rootComponent: RootComponent,
+            component: Component,
             transition,
             ...childProps
         } = this.props;
@@ -142,12 +142,12 @@ class Popup extends React.Component {
         delete childProps.maskComponent;
         delete childProps.maskTransition;
 
-        const popupRootProps = {};
-        if (PopupRootComponent !== Fragment) {
-            popupRootProps.ref = this.saveRef.bind(this, "popupRoot");
-            popupRootProps.className = classnames({
+        const rootProps = {};
+        if (RootComponent !== Fragment) {
+            rootProps.ref = this.saveRef.bind(this, "popupRoot");
+            rootProps.className = classnames({
                 [`${prefix}-root`]: true,
-                [popupRootClassName]: popupRootClassName
+                [rootClassName]: rootClassName
             });
         }
 
@@ -165,7 +165,7 @@ class Popup extends React.Component {
 
         return (
             <TransitionGroupContext.Provider value={null}>
-                <PopupRootComponent>
+                <RootComponent>
                     {this.renderPopupMask()}
                     <CSSTransition
                         enter
@@ -173,7 +173,7 @@ class Popup extends React.Component {
                         appear
                         classNames={{}}
                         timeout={timeout}
-                        addEndListener={(_, cb) => cb()}
+                        addEndListener={(_, cb) => timeout == null && cb()}
                         {...transition}
                         in={visible}
                         onEnter={this.onEnter.bind(this, transition)}
@@ -184,7 +184,7 @@ class Popup extends React.Component {
                         {status => {
                             this.transitionStatus = status;
                             return (
-                                <PopupComponent
+                                <Component
                                     {...childProps}
                                     ref={this.saveRef.bind(this, "popup")}
                                     style={{
@@ -196,11 +196,11 @@ class Popup extends React.Component {
                                     {typeof children === "function"
                                         ? children(status)
                                         : children}
-                                </PopupComponent>
+                                </Component>
                             );
                         }}
                     </CSSTransition>
-                </PopupRootComponent>
+                </RootComponent>
             </TransitionGroupContext.Provider>
         );
     }
@@ -210,7 +210,7 @@ Popup.propTypes = {
     prefix: PropTypes.string,
     style: PropTypes.object,
     className: PropTypes.string,
-    popupRootClassName: PropTypes.string,
+    rootClassName: PropTypes.string,
 
     fixed: PropTypes.bool,
     visible: PropTypes.bool,
@@ -222,11 +222,11 @@ Popup.propTypes = {
     maskStyle: PropTypes.object,
     maskProps: PropTypes.object,
     maskClassName: PropTypes.string,
-    maskComponent: PropTypes.elementType,
     maskTransition: PropTypes.object,
 
-    popupComponent: PropTypes.elementType,
-    popupRootComponent: PropTypes.elementType,
+    component: PropTypes.elementType,
+    maskComponent: PropTypes.elementType,
+    rootComponent: PropTypes.elementType,
 
     // 动画超时时间，建议在transition和maskTransition设置
     timeout: PropTypes.oneOfType([PropTypes.number, PropTypes.object])
@@ -236,10 +236,10 @@ Popup.defaultProps = {
     prefix: "nex-popup",
     style: {},
     className: "",
-    popupRootClassName: "",
+    rootClassName: "",
 
     fixed: false,
-    visible: true,
+    visible: false,
     //初始未显示的情况下不渲染组件，作用同react-transition-group的mountOnEnter
     lazyMount: true,
     //popup动画配置参数参考react-transition-group
@@ -252,13 +252,13 @@ Popup.defaultProps = {
     maskStyle: {},
     maskProps: {},
     maskClassName: "",
-    maskComponent: "div",
     //popupMask动画配置参数参考react-transition-group
     //http://reactcommunity.org/react-transition-group/css-transition
     maskTransition: {},
 
-    popupComponent: "div",
-    popupRootComponent: Fragment
+    component: "div",
+    maskComponent: "div",
+    rootComponent: Fragment
 };
 
 export default Popup;

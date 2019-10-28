@@ -1,34 +1,32 @@
 import React from "react";
-import {
-    TransitionProps,
-    TransitionChildren
-} from "react-transition-group/Transition";
+import { TransitionChildren } from "react-transition-group/Transition";
+import { CSSTransitionProps } from "react-transition-group/CSSTransition";
 
 export interface PopupProps {
     children?: TransitionChildren;
     prefix?: string;
     style?: React.CSSProperties;
     className?: string;
-    popupRootClassName?: string;
+    rootClassName?: string;
 
     fixed?: boolean;
     visible?: boolean;
     lazyMount?: boolean;
-    transition?: TransitionProps;
+    transition?: CSSTransitionProps;
     destroyOnHide?: boolean;
 
     mask?: boolean;
     maskStyle?: React.CSSProperties;
     maskProps?: {};
     maskClassName?: string;
-    maskComponent?: React.ElementType;
-    maskTransition?: TransitionProps;
+    maskTransition?: CSSTransitionProps;
 
-    popupComponent?: React.ElementType;
-    popupRootComponent?: React.ElementType;
+    component?: React.ElementType;
+    maskComponent?: React.ElementType;
+    rootComponent?: React.ElementType;
 
     // 动画超时时间，建议在transition和maskTransition设置
-    timeout?: TransitionProps.timeout;
+    timeout?: CSSTransitionProps.timeout;
 
     [prop: string]: any;
 }

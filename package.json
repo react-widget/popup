@@ -1,16 +1,11 @@
 {
     "name": "react-widget-popup",
-    "version": "1.0.7",
+    "version": "2.0.0",
     "description": "",
-    "main": "index.js",
+    "main": "lib/index.js",
     "dependencies": {
         "@babel/runtime": "^7.6.3",
-        "bplokjs-dom-utils": "^1.0.8",
-        "bplokjs-jqlite": "^1.0.3",
-        "bplokjs-position": "^1.0.4",
         "classnames": "^2.2.6",
-        "dom-helpers": "^3.4.0",
-        "lodash": "^4.17.15",
         "prop-types": "^15.7.2",
         "react": "^16.11.0",
         "react-dom": "^16.11.0",
@@ -87,18 +82,17 @@
         "webpack-merge": "^4.2.2"
     },
     "files": [
-        "*.js",
         "lib",
         "*.md"
     ],
     "scripts": {
-        "docs": "node build/docs",
+        "docs": "packez build ./examples/index.js -d docs -c",
         "start": "transform-es src -d lib -c -w --corejs false",
         "demo": "packez server ./examples/index.js -d dist -w -c",
         "test": "echo \"Error: no test specified\" && exit 1",
         "build": "packez build ./examples/index.js -d docs -w",
-        "server": "packez server ./src/index.js -c",
-        "analyzer": "packez analyzer ./src/index.js -c"
+        "server": "packez server ./examples/index.js -c",
+        "analyzer": "packez analyzer ./examples/index.js -c"
     },
     "repository": {
         "type": "git",
