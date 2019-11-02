@@ -1,43 +1,21 @@
 
-"use strict";
-
-var _interopRequireWildcard = require("@babel/runtime/helpers/interopRequireWildcard");
-
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _objectWithoutPropertiesLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/objectWithoutPropertiesLoose"));
-
-var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/extends"));
-
-var _assertThisInitialized2 = _interopRequireDefault(require("@babel/runtime/helpers/assertThisInitialized"));
-
-var _inheritsLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/inheritsLoose"));
-
-var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
-
-var _react = _interopRequireWildcard(require("react"));
-
-var _reactDom = _interopRequireDefault(require("react-dom"));
-
-var _propTypes = _interopRequireDefault(require("prop-types"));
-
-var _classnames4 = _interopRequireDefault(require("classnames"));
-
-var _TransitionGroupContext = _interopRequireDefault(require("react-transition-group/TransitionGroupContext"));
-
-var _Transition = require("react-transition-group/Transition");
-
-var _CSSTransition = _interopRequireDefault(require("react-transition-group/CSSTransition"));
+import _objectWithoutPropertiesLoose from "@babel/runtime/helpers/objectWithoutPropertiesLoose";
+import _extends from "@babel/runtime/helpers/extends";
+import _assertThisInitialized from "@babel/runtime/helpers/assertThisInitialized";
+import _inheritsLoose from "@babel/runtime/helpers/inheritsLoose";
+import _defineProperty from "@babel/runtime/helpers/defineProperty";
+import React, { Fragment } from "react";
+import ReactDOM from "react-dom";
+import PropTypes from "prop-types";
+import classnames from "classnames";
+import TransitionGroupContext from "react-transition-group/TransitionGroupContext";
+import { EXITED } from "react-transition-group/Transition";
+import CSSTransition from "react-transition-group/CSSTransition";
 
 var Popup =
 /*#__PURE__*/
 function (_React$Component) {
-  (0, _inheritsLoose2.default)(Popup, _React$Component);
+  _inheritsLoose(Popup, _React$Component);
 
   function Popup() {
     var _this;
@@ -47,8 +25,11 @@ function (_React$Component) {
     }
 
     _this = _React$Component.call.apply(_React$Component, [this].concat(args)) || this;
-    (0, _defineProperty2.default)((0, _assertThisInitialized2.default)(_this), "transitionStatus", _Transition.EXITED);
-    (0, _defineProperty2.default)((0, _assertThisInitialized2.default)(_this), "_refs", {});
+
+    _defineProperty(_assertThisInitialized(_this), "transitionStatus", EXITED);
+
+    _defineProperty(_assertThisInitialized(_this), "_refs", {});
+
     return _this;
   }
 
@@ -56,7 +37,7 @@ function (_React$Component) {
 
   _proto.shouldComponentUpdate = function shouldComponentUpdate(nextProps, nextState) {
     var status = this.transitionStatus;
-    return !(_Transition.EXITED === status && !nextProps.visible);
+    return !(EXITED === status && !nextProps.visible);
   };
 
   _proto.shouldHide = function shouldHide() {
@@ -71,15 +52,15 @@ function (_React$Component) {
   };
 
   _proto.getPopupRootDOM = function getPopupRootDOM() {
-    return _reactDom.default.findDOMNode(this._refs["popupRoot"]);
+    return ReactDOM.findDOMNode(this._refs["popupRoot"]);
   };
 
   _proto.getPopupDOM = function getPopupDOM() {
-    return _reactDom.default.findDOMNode(this._refs["popup"]);
+    return ReactDOM.findDOMNode(this._refs["popup"]);
   };
 
   _proto.getPopupMaskDOM = function getPopupMaskDOM() {
-    return _reactDom.default.findDOMNode(this._refs["popupMask"]);
+    return ReactDOM.findDOMNode(this._refs["popupMask"]);
   };
 
   _proto.onEnter = function onEnter(_ref, isMask, node, appearing) {
@@ -152,14 +133,14 @@ function (_React$Component) {
         fixed = _this$props3.fixed,
         timeout = _this$props3.timeout,
         MaskComponent = _this$props3.maskComponent;
-    var classes = (0, _classnames4.default)((_classnames = {}, _classnames[prefix + "-mask"] = true, _classnames[prefix + "-mask-fixed"] = fixed, _classnames[maskProps.className] = maskProps.className, _classnames[maskClassName] = maskClassName, _classnames));
+    var classes = classnames((_classnames = {}, _classnames[prefix + "-mask"] = true, _classnames[prefix + "-mask-fixed"] = fixed, _classnames[maskProps.className] = maskProps.className, _classnames[maskClassName] = maskClassName, _classnames));
     var mStyle = {};
 
     if (this.shouldHide()) {
       mStyle.display = "none";
     }
 
-    return _react.default.createElement(_CSSTransition.default, (0, _extends2.default)({
+    return React.createElement(CSSTransition, _extends({
       enter: true,
       exit: true,
       appear: true,
@@ -174,9 +155,9 @@ function (_React$Component) {
       onExited: this.onExited.bind(this, maskTransition, true),
       unmountOnExit: destroyOnHide,
       mountOnEnter: lazyMount
-    }), _react.default.createElement(MaskComponent, (0, _extends2.default)({}, maskProps, {
+    }), React.createElement(MaskComponent, _extends({}, maskProps, {
       ref: this.saveRef.bind(this, "popupMask"),
-      style: (0, _extends2.default)({}, maskStyle, {}, mStyle),
+      style: _extends({}, maskStyle, {}, mStyle),
       className: classes
     })));
   };
@@ -199,7 +180,8 @@ function (_React$Component) {
         RootComponent = _this$props4.rootComponent,
         Component = _this$props4.component,
         transition = _this$props4.transition,
-        childProps = (0, _objectWithoutPropertiesLoose2.default)(_this$props4, ["style", "prefix", "className", "fixed", "timeout", "visible", "children", "lazyMount", "destroyOnHide", "rootClassName", "rootComponent", "component", "transition"]);
+        childProps = _objectWithoutPropertiesLoose(_this$props4, ["style", "prefix", "className", "fixed", "timeout", "visible", "children", "lazyMount", "destroyOnHide", "rootClassName", "rootComponent", "component", "transition"]);
+
     delete childProps.mask;
     delete childProps.maskProps;
     delete childProps.maskStyle;
@@ -209,23 +191,23 @@ function (_React$Component) {
     delete childProps.getPosition;
     var rootProps = {};
 
-    if (RootComponent !== _react.Fragment) {
+    if (RootComponent !== Fragment) {
       var _classnames2;
 
       rootProps.ref = this.saveRef.bind(this, "popupRoot");
-      rootProps.className = (0, _classnames4.default)((_classnames2 = {}, _classnames2[prefix + "-root"] = true, _classnames2[rootClassName] = rootClassName, _classnames2));
+      rootProps.className = classnames((_classnames2 = {}, _classnames2[prefix + "-root"] = true, _classnames2[rootClassName] = rootClassName, _classnames2));
     }
 
-    var classes = (0, _classnames4.default)((_classnames3 = {}, _classnames3[prefix] = true, _classnames3[prefix + "-fixed"] = fixed, _classnames3[className] = className, _classnames3));
+    var classes = classnames((_classnames3 = {}, _classnames3[prefix] = true, _classnames3[prefix + "-fixed"] = fixed, _classnames3[className] = className, _classnames3));
     var pStyle = {};
 
     if (this.shouldHide()) {
       pStyle.display = "none";
     }
 
-    return _react.default.createElement(_TransitionGroupContext.default.Provider, {
+    return React.createElement(TransitionGroupContext.Provider, {
       value: null
-    }, _react.default.createElement(RootComponent, null, this.renderPopupMask(), _react.default.createElement(_CSSTransition.default, (0, _extends2.default)({
+    }, React.createElement(RootComponent, null, this.renderPopupMask(), React.createElement(CSSTransition, _extends({
       enter: true,
       exit: true,
       appear: true,
@@ -242,38 +224,38 @@ function (_React$Component) {
       mountOnEnter: lazyMount
     }), function (status) {
       _this2.transitionStatus = status;
-      return _react.default.createElement(Component, (0, _extends2.default)({}, childProps, {
+      return React.createElement(Component, _extends({}, childProps, {
         ref: _this2.saveRef.bind(_this2, "popup"),
-        style: (0, _extends2.default)({}, style, {}, pStyle),
+        style: _extends({}, style, {}, pStyle),
         className: classes
       }), typeof children === "function" ? children(status) : children);
     })));
   };
 
   return Popup;
-}(_react.default.Component);
+}(React.Component);
 
 Popup.propTypes = process.env.NODE_ENV !== "production" ? {
-  prefix: _propTypes.default.string,
-  style: _propTypes.default.object,
-  className: _propTypes.default.string,
-  rootClassName: _propTypes.default.string,
-  fixed: _propTypes.default.bool,
-  visible: _propTypes.default.bool,
-  lazyMount: _propTypes.default.bool,
-  transition: _propTypes.default.object,
-  destroyOnHide: _propTypes.default.bool,
-  getPosition: _propTypes.default.func,
-  mask: _propTypes.default.bool,
-  maskStyle: _propTypes.default.object,
-  maskProps: _propTypes.default.object,
-  maskClassName: _propTypes.default.string,
-  maskTransition: _propTypes.default.object,
-  component: _propTypes.default.elementType,
-  maskComponent: _propTypes.default.elementType,
-  rootComponent: _propTypes.default.elementType,
+  prefix: PropTypes.string,
+  style: PropTypes.object,
+  className: PropTypes.string,
+  rootClassName: PropTypes.string,
+  fixed: PropTypes.bool,
+  visible: PropTypes.bool,
+  lazyMount: PropTypes.bool,
+  transition: PropTypes.object,
+  destroyOnHide: PropTypes.bool,
+  getPosition: PropTypes.func,
+  mask: PropTypes.bool,
+  maskStyle: PropTypes.object,
+  maskProps: PropTypes.object,
+  maskClassName: PropTypes.string,
+  maskTransition: PropTypes.object,
+  component: PropTypes.elementType,
+  maskComponent: PropTypes.elementType,
+  rootComponent: PropTypes.elementType,
   // 动画超时时间，建议在transition和maskTransition设置
-  timeout: _propTypes.default.oneOfType([_propTypes.default.number, _propTypes.default.object])
+  timeout: PropTypes.oneOfType([PropTypes.number, PropTypes.object])
 } : {};
 Popup.defaultProps = {
   prefix: "nex-popup",
@@ -298,7 +280,6 @@ Popup.defaultProps = {
   maskTransition: {},
   component: "div",
   maskComponent: "div",
-  rootComponent: _react.Fragment
+  rootComponent: Fragment
 };
-var _default = Popup;
-exports.default = _default;
+export default Popup;

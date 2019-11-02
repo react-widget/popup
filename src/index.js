@@ -5,8 +5,6 @@ import classnames from "classnames";
 import TransitionGroupContext from "react-transition-group/TransitionGroupContext";
 import { EXITED } from "react-transition-group/Transition";
 import CSSTransition from "react-transition-group/CSSTransition";
-// import PopupCSSTransition from "./PopupCSSTransition";
-// import PopupContext from "./PopupContext";
 
 class Popup extends React.Component {
     transitionStatus = EXITED;
@@ -41,10 +39,6 @@ class Popup extends React.Component {
     onEnter({ onEnter }, isMask, node, appearing) {
         const { destroyOnHide, getPosition } = this.props;
 
-        if (onEnter) {
-            onEnter(node, appearing);
-        }
-
         if (!destroyOnHide) {
             node.style.display = "";
         }
@@ -68,17 +62,21 @@ class Popup extends React.Component {
                 }
             }
         }
+
+        if (onEnter) {
+            onEnter(node, appearing);
+        }
     }
 
     onExited({ onExited }, isMask, node) {
         const { destroyOnHide } = this.props;
 
-        if (onExited) {
-            onExited(node);
-        }
-
         if (!destroyOnHide) {
             node.style.display = "none";
+        }
+
+        if (onExited) {
+            onExited(node);
         }
     }
 
@@ -187,7 +185,6 @@ class Popup extends React.Component {
         }
 
         return (
-            // <PopupContext.Provider value={this}>
             <TransitionGroupContext.Provider value={null}>
                 <RootComponent>
                     {this.renderPopupMask()}
@@ -226,7 +223,6 @@ class Popup extends React.Component {
                     </CSSTransition>
                 </RootComponent>
             </TransitionGroupContext.Provider>
-            // </PopupContext.Provider>
         );
     }
 }
