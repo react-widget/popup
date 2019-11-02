@@ -42,10 +42,17 @@ export default class DEMO extends Component {
                                 .fadeOut(500);
                         }
                     }}
-                    style={{
-                        left: 10,
-                        top: 10
+                    getPosition={dom => {
+                        console.log(dom);
+                        return {
+                            left: 20,
+                            top: 20
+                        };
                     }}
+                    // style={{
+                    //     left: 10,
+                    //     top: 10
+                    // }}
                 >
                     <div className="dialog">center...</div>
                 </Popup>

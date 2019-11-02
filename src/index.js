@@ -5,6 +5,8 @@ import classnames from "classnames";
 import TransitionGroupContext from "react-transition-group/TransitionGroupContext";
 import { EXITED } from "react-transition-group/Transition";
 import CSSTransition from "react-transition-group/CSSTransition";
+// import PopupCSSTransition from "./PopupCSSTransition";
+// import PopupContext from "./PopupContext";
 
 class Popup extends React.Component {
     transitionStatus = EXITED;
@@ -36,8 +38,8 @@ class Popup extends React.Component {
         return ReactDOM.findDOMNode(this._refs["popupMask"]);
     }
 
-    onEnter({ onEnter }, node, appearing) {
-        const { destroyOnHide } = this.props;
+    onEnter({ onEnter }, isMask, node, appearing) {
+        const { destroyOnHide, getPosition } = this.props;
 
         if (onEnter) {
             onEnter(node, appearing);
@@ -46,9 +48,29 @@ class Popup extends React.Component {
         if (!destroyOnHide) {
             node.style.display = "";
         }
+
+        if (!isMask && getPosition) {
+            const pos = getPosition(node);
+            const transform = v => (typeof v === "number" ? `${v}px` : v);
+
+            if (pos) {
+                if ("left" in pos) {
+                    node.style.left = transform(pos.left);
+                }
+                if ("top" in pos) {
+                    node.style.top = transform(pos.top);
+                }
+                if ("right" in pos) {
+                    node.style.right = transform(pos.right);
+                }
+                if ("bottom" in pos) {
+                    node.style.bottom = transform(pos.bottom);
+                }
+            }
+        }
     }
 
-    onExited({ onExited }, node) {
+    onExited({ onExited }, isMask, node) {
         const { destroyOnHide } = this.props;
 
         if (onExited) {
@@ -99,8 +121,8 @@ class Popup extends React.Component {
                 addEndListener={(_, cb) => timeout == null && cb()}
                 {...maskTransition}
                 in={mask && visible}
-                onEnter={this.onEnter.bind(this, maskTransition)}
-                onExited={this.onExited.bind(this, maskTransition)}
+                onEnter={this.onEnter.bind(this, maskTransition, true)}
+                onExited={this.onExited.bind(this, maskTransition, true)}
                 unmountOnExit={destroyOnHide}
                 mountOnEnter={lazyMount}
             >
@@ -141,6 +163,7 @@ class Popup extends React.Component {
         delete childProps.maskClassName;
         delete childProps.maskComponent;
         delete childProps.maskTransition;
+        delete childProps.getPosition;
 
         const rootProps = {};
         if (RootComponent !== Fragment) {
@@ -164,6 +187,7 @@ class Popup extends React.Component {
         }
 
         return (
+            // <PopupContext.Provider value={this}>
             <TransitionGroupContext.Provider value={null}>
                 <RootComponent>
                     {this.renderPopupMask()}
@@ -176,8 +200,8 @@ class Popup extends React.Component {
                         addEndListener={(_, cb) => timeout == null && cb()}
                         {...transition}
                         in={visible}
-                        onEnter={this.onEnter.bind(this, transition)}
-                        onExited={this.onExited.bind(this, transition)}
+                        onEnter={this.onEnter.bind(this, transition, false)}
+                        onExited={this.onExited.bind(this, transition, false)}
                         unmountOnExit={destroyOnHide}
                         mountOnEnter={lazyMount}
                     >
@@ -202,6 +226,7 @@ class Popup extends React.Component {
                     </CSSTransition>
                 </RootComponent>
             </TransitionGroupContext.Provider>
+            // </PopupContext.Provider>
         );
     }
 }
@@ -217,6 +242,7 @@ Popup.propTypes = {
     lazyMount: PropTypes.bool,
     transition: PropTypes.object,
     destroyOnHide: PropTypes.bool,
+    getPosition: PropTypes.func,
 
     mask: PropTypes.bool,
     maskStyle: PropTypes.object,
