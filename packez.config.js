@@ -1,12 +1,20 @@
-const _ = require("lodash");
-
-module.exports = function({ method, program, ...defaults }) {
-    const opts = {
-        // 自定义配置
-        loaders: {
-            scss: true
-        }
-    };
-
-    return _.defaultsDeep(opts, defaults);
+const pkg = require("./package.json");
+module.exports = function (options, state) {
+	return {
+		babel: {
+			plugins: [
+				[
+					"search-and-replace",
+					{
+						rules: [
+							{
+								search: "%VERSION%",
+								replace: pkg.version,
+							},
+						],
+					},
+				],
+			],
+		},
+	};
 };

@@ -1,123 +1,54 @@
 {
-    "name": "react-widget-popup",
-    "version": "2.1.0",
-    "description": "",
-    "main": "lib/index.js",
-    "module": "esm/index.js",
-    "dependencies": {
-        "@babel/runtime": "^7.6.3",
-        "classnames": "^2.2.6",
-        "prop-types": "^15.7.2",
-        "react": "^16.11.0",
-        "react-dom": "^16.11.0",
-        "react-transition-group": "^4.3.0"
-    },
-    "devDependencies": {
-        "@babel/core": "^7.6.4",
-        "@babel/plugin-proposal-async-generator-functions": "^7.2.0",
-        "@babel/plugin-proposal-class-properties": "^7.5.5",
-        "@babel/plugin-proposal-decorators": "^7.6.0",
-        "@babel/plugin-proposal-do-expressions": "^7.6.0",
-        "@babel/plugin-proposal-export-default-from": "^7.5.2",
-        "@babel/plugin-proposal-export-namespace-from": "^7.5.2",
-        "@babel/plugin-proposal-function-bind": "^7.2.0",
-        "@babel/plugin-proposal-function-sent": "^7.5.0",
-        "@babel/plugin-proposal-logical-assignment-operators": "^7.2.0",
-        "@babel/plugin-proposal-nullish-coalescing-operator": "^7.4.4",
-        "@babel/plugin-proposal-numeric-separator": "^7.2.0",
-        "@babel/plugin-proposal-optional-chaining": "^7.6.0",
-        "@babel/plugin-proposal-pipeline-operator": "^7.5.0",
-        "@babel/plugin-proposal-throw-expressions": "^7.2.0",
-        "@babel/plugin-syntax-dynamic-import": "^7.2.0",
-        "@babel/plugin-transform-flow-strip-types": "^7.6.3",
-        "@babel/plugin-transform-modules-amd": "^7.5.0",
-        "@babel/plugin-transform-modules-commonjs": "^7.6.0",
-        "@babel/plugin-transform-modules-systemjs": "^7.5.0",
-        "@babel/plugin-transform-modules-umd": "^7.2.0",
-        "@babel/plugin-transform-proto-to-assign": "^7.5.5",
-        "@babel/plugin-transform-react-jsx": "^7.3.0",
-        "@babel/plugin-transform-react-jsx-self": "^7.2.0",
-        "@babel/plugin-transform-runtime": "^7.6.2",
-        "@babel/preset-env": "^7.6.3",
-        "@babel/preset-flow": "^7.0.0",
-        "@babel/preset-react": "^7.6.3",
-        "autoprefixer": "^9.7.1",
-        "babel-eslint": "^10.0.3",
-        "babel-loader": "^8.0.6",
-        "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
-        "babel-preset-packez": "^0.4.2",
-        "bplokjs-deferred": "^1.0.0",
-        "chalk": "^2.4.2",
-        "clean-webpack-plugin": "^0.1.19",
-        "core-js": "^3.3.6",
-        "css-loader": "^1.0.1",
-        "eslint": "^6.6.0",
-        "eslint-config-packez": "^0.3.0",
-        "eslint-loader": "^3.0.2",
-        "extract-loader": "^3.1.0",
-        "file-loader": "^2.0.0",
-        "html-loader": "^0.5.5",
-        "html-webpack-plugin": "^3.2.0",
-        "jquery": "^3.4.1",
-        "json5-loader": "^1.0.1",
-        "make-webpack-config": "^1.5.2",
-        "mini-css-extract-plugin": "^0.4.5",
-        "node-sass": "^4.13.0",
-        "opn": "^5.5.0",
-        "optimize-css-assets-webpack-plugin": "^5.0.3",
-        "packez": "^2.5.2",
-        "postcss": "^7.0.21",
-        "postcss-flexbugs-fixes": "^4.1.0",
-        "postcss-loader": "^3.0.0",
-        "postcss-preset-env": "^6.7.0",
-        "postcss-safe-parser": "^4.0.1",
-        "precss": "^3.1.2",
-        "raw-loader": "^0.5.1",
-        "sass-loader": "^7.3.1",
-        "simple-tree-store": "^1.2.1",
-        "style-loader": "^1.0.0",
-        "transform-es": "^3.3.2",
-        "url-loader": "^1.1.1",
-        "webpack": "^4.41.2",
-        "webpack-dev-server": "^3.9.0",
-        "webpack-manifest-plugin": "^2.2.0",
-        "webpack-merge": "^4.2.2"
-    },
-    "files": [
-        "esm",
-        "lib",
-        "*.md"
-    ],
-    "scripts": {
-        "docs": "packez build ./examples/index.js -d docs -c",
-        "start": "transform-es src -d lib -c -w --corejs false",
-        "esm": "transform-es src -d esm -t esm -c ",
-        "cjs": "transform-es src -d lib -t cjs -c ",
-        "demo": "packez server ./examples/index.js -d dist -w -c",
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "build": "packez build ./examples/index.js -d docs -w",
-        "server": "packez server ./examples/index.js -c",
-        "analyzer": "packez analyzer ./examples/index.js -c"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/react-widget/popup.git"
-    },
-    "keywords": [
-        "react-widget",
-        "popup",
-        "react"
-    ],
-    "author": "nobo.zhou@foxmail.com",
-    "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/react-widget/popup/issues"
-    },
-    "homepage": "https://github.com/react-widget/popup#readme",
-    "browserslist": [
-        ">0.2%",
-        "not dead",
-        "not ie <= 11",
-        "not op_mini all"
-    ]
+	"name": "react-widget-popup",
+	"version": "2.1.0",
+	"description": "",
+	"main": "lib/index.js",
+	"module": "esm/index.js",
+	"dependencies": {
+		"classnames": "^2.2.6",
+		"react": "^16.13.1",
+		"react-transition-group": "^4.3.0"
+	},
+	"devDependencies": {
+		"packez": "^4.1.2",
+		"react-dom": "^16.13.1",
+		"transform-es": "^5.0.3"
+	},
+	"files": [
+		"esm",
+		"lib",
+		"*.md"
+	],
+	"scripts": {
+		"docs": "packez build ./examples/index.js -d docs -c",
+		"start": "transform-es src -d lib -c -w --corejs false",
+		"esm": "transform-es src -d esm -t esm -c ",
+		"cjs": "transform-es src -d lib -t cjs -c ",
+		"demo": "packez server ./examples/index.js -d dist -w -c",
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"build": "packez build ./examples/index.js -d docs -w",
+		"server": "packez server ./examples/index.js -c",
+		"analyzer": "packez analyzer ./examples/index.js -c"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/react-widget/popup.git"
+	},
+	"keywords": [
+		"react-widget",
+		"popup",
+		"react"
+	],
+	"author": "nobo.zhou@foxmail.com",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/react-widget/popup/issues"
+	},
+	"homepage": "https://github.com/react-widget/popup#readme",
+	"browserslist": [
+		">0.2%",
+		"not dead",
+		"not ie <= 11",
+		"not op_mini all"
+	]
 }
