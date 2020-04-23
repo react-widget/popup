@@ -42,7 +42,7 @@ interface PopupProps {
     rootClassName?: string;
 
     fixed?: boolean;
-    visible?: boolean;
+    visible: boolean;
     lazyMount?: boolean;
     //http://reactcommunity.org/react-transition-group/css-transition
     transition?: CSSTransitionProps;
@@ -59,9 +59,6 @@ interface PopupProps {
     maskComponent?: React.ElementType;
     rootComponent?: React.ElementType;
 
-    // 动画超时时间，建议在transition和maskTransition设置
-    timeout?: CSSTransitionProps.timeout;
-
     [prop: string]: any;
 }
 ```
@@ -70,13 +67,12 @@ interface PopupProps {
 
 ```js
 {
-    prefix: "nex-popup",
+    prefix: "rw-popup",
     style: {},
     className: "",
     rootClassName: "",
 
     fixed: false,
-    visible: false,
     lazyMount: true,
     transition: {},
     destroyOnHide: true,
@@ -96,21 +92,21 @@ interface PopupProps {
 ### 基础样式
 
 ```css
-.nex-popup-root {
+.rw-popup-root {
     position: absolute;
     left: 0;
     top: 0;
     right: 0;
 }
 
-.nex-popup {
+.rw-popup {
     position: absolute;
     left: 0;
     top: 0;
     outline: 0;
 }
 
-.nex-popup-mask {
+.rw-popup-mask {
     position: absolute;
     left: 0;
     top: 0;
@@ -120,8 +116,8 @@ interface PopupProps {
     opacity: 0.1;
 }
 
-.nex-popup-fixed,
-.nex-popup-mask-fixed {
+.rw-popup-fixed,
+.rw-popup-mask-fixed {
     position: fixed;
 }
 ```

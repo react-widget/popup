@@ -3,60 +3,54 @@ import Popup from "../../src";
 import $ from "jquery";
 
 export default class DEMO extends Component {
-    state = {
-        visible: false
-    };
+	state = {
+		visible: false,
+	};
 
-    toggleClick = e => {
-        const { visible } = this.state;
-        this.setState({
-            visible: !visible
-        });
-    };
+	toggleClick = e => {
+		const { visible } = this.state;
+		this.setState({
+			visible: !visible,
+		});
+	};
 
-    componentDidMount() {
-        // setInterval(this.forceUpdate.bind(this), 1000);
-    }
+	componentDidMount() {
+		// setInterval(this.forceUpdate.bind(this), 1000);
+	}
 
-    render() {
-        const { visible } = this.state;
+	render() {
+		const { visible } = this.state;
 
-        return (
-            <div>
-                <button onClick={this.toggleClick}>
-                    {visible ? "关闭" : "显示"}
-                </button>
-                <Popup
-                    visible={visible}
-                    timeout={500}
-                    transition={{
-                        onEnter: node => {
-                            $(node).hide();
-                            $(node)
-                                .stop()
-                                .fadeIn(500);
-                        },
-                        onExit: node => {
-                            $(node)
-                                .stop()
-                                .fadeOut(500);
-                        }
-                    }}
-                    getPosition={dom => {
-                        console.log(dom);
-                        return {
-                            left: 20,
-                            top: 20
-                        };
-                    }}
-                    // style={{
-                    //     left: 10,
-                    //     top: 10
-                    // }}
-                >
-                    <div className="dialog">center...</div>
-                </Popup>
-            </div>
-        );
-    }
+		return (
+			<div>
+				<button onClick={this.toggleClick}>{visible ? "关闭" : "显示"}</button>
+				<Popup
+					visible={visible}
+					transition={{
+						timeout: 500,
+						onEnter: node => {
+							$(node).hide();
+							$(node).stop().fadeIn(500);
+						},
+						onExit: node => {
+							$(node).stop().fadeOut(500);
+						},
+					}}
+					getPosition={dom => {
+						console.log(dom);
+						return {
+							left: "50%",
+							top: 50,
+						};
+					}}
+					// style={{
+					//     left: 10,
+					//     top: 10
+					// }}
+				>
+					<div className="dialog">center...</div>
+				</Popup>
+			</div>
+		);
+	}
 }

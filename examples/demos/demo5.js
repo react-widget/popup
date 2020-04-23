@@ -1,6 +1,25 @@
 import React, { Component, Fragment } from "react";
 import Popup from "../../src";
-import $ from "jquery";
+
+const animateClassNames = {
+	appear: "animated",
+	appearActive: "fadeBottomIn",
+	enter: "animated",
+	enterActive: "fadeBottomIn",
+	enterDone: undefined,
+	exit: "animated",
+	exitActive: "fadeBottomOut",
+	exitDone: undefined,
+};
+
+const maskAnimateClassNames = {
+	appear: "animated",
+	appearActive: "fadeIn",
+	enter: "animated",
+	enterActive: "fadeIn",
+	exit: "animated",
+	exitActive: "fadeOut",
+};
 
 export default class DEMO extends Component {
 	state = {
@@ -22,21 +41,6 @@ export default class DEMO extends Component {
 		});
 	};
 
-	refButton = dom => {
-		this._defer.resolve({
-			of: dom,
-			my: "left top",
-			at: "left bottom",
-		});
-	};
-
-	refButton2 = dom => {
-		this._defer2.resolve({
-			of: dom,
-			my: "left center",
-			at: "right center",
-		});
-	};
 	render() {
 		const { visible, mask } = this.state;
 
@@ -47,6 +51,7 @@ export default class DEMO extends Component {
 					<button onClick={this.toggleClick2}>
 						{mask ? "关闭遮罩层" : "显示遮罩层"}
 					</button>
+					<button onClick={() => this.forceUpdate()}>refresh</button>
 				</div>
 				<div
 					style={{
@@ -58,35 +63,19 @@ export default class DEMO extends Component {
 					<Popup
 						visible={visible}
 						mask={mask}
+						destroyOnHide={true}
 						style={{
-							left: "50%",
-							top: 10,
 							background: "#ff5454",
 							color: "#FFF",
 							padding: 10,
 						}}
-						transition={{
-							timeout: 500,
-							onEnter: node => {
-								$(node).hide();
-								$(node).stop().fadeIn(500);
-							},
-							onExit: node => {
-								$(node).stop().fadeOut(500);
-							},
-						}}
-						maskTransition={{
-							timeout: 500,
-							onEnter: node => {
-								$(node).hide();
-								$(node).stop().fadeIn(500);
-							},
-							onExit: node => {
-								$(node).stop().fadeOut(500);
+						maskProps={{
+							onClick: () => {
+								this.toggleClick2();
 							},
 						}}
 					>
-						<div>center2...</div>
+						<div>fixed test</div>
 					</Popup>
 				</div>
 			</Fragment>

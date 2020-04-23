@@ -1,34 +1,48 @@
 {
 	"name": "react-widget-popup",
-	"version": "2.1.0",
+	"version": "3.0.0",
 	"description": "",
-	"main": "lib/index.js",
+	"main": "cjs/index.js",
 	"module": "esm/index.js",
+	"types": "lib/index.d.ts",
 	"dependencies": {
+		"@babel/runtime": "^7.9.2",
+		"@types/react-transition-group": "^4.2.4",
 		"classnames": "^2.2.6",
 		"react": "^16.13.1",
 		"react-transition-group": "^4.3.0"
 	},
 	"devDependencies": {
+		"@types/enzyme": "^3.10.5",
+		"@types/enzyme-adapter-react-16": "^1.0.6",
+		"@types/react": "^16.9.34",
+		"babel-plugin-search-and-replace": "^1.0.1",
+		"babel-plugin-transform-react-remove-prop-types": "^0.4.24",
+		"enzyme": "^3.11.0",
+		"enzyme-adapter-react-16": "^1.15.2",
+		"jest": "^25.4.0",
+		"jquery": "^3.5.0",
+		"npm-run-all": "^4.1.5",
 		"packez": "^4.1.2",
 		"react-dom": "^16.13.1",
-		"transform-es": "^5.0.3"
+		"transform-es": "^5.0.3",
+		"typescript": "^3.8.3"
 	},
 	"files": [
+		"cjs",
 		"esm",
 		"lib",
 		"*.md"
 	],
 	"scripts": {
 		"docs": "packez build ./examples/index.js -d docs -c",
-		"start": "transform-es src -d lib -c -w --corejs false",
-		"esm": "transform-es src -d esm -t esm -c ",
-		"cjs": "transform-es src -d lib -t cjs -c ",
+		"start": "tsc -w",
+		"cjs": "transform-es src -d cjs -c -t cjs",
+		"esm": "transform-es src -d esm -c -t esm",
+		"tsc": "tsc",
 		"demo": "packez server ./examples/index.js -d dist -w -c",
-		"test": "echo \"Error: no test specified\" && exit 1",
-		"build": "packez build ./examples/index.js -d docs -w",
-		"server": "packez server ./examples/index.js -c",
-		"analyzer": "packez analyzer ./examples/index.js -c"
+		"test": "jest",
+		"build": "run-s tsc cjs esm docs"
 	},
 	"repository": {
 		"type": "git",

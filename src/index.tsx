@@ -1,0 +1,297 @@
+import React, { Fragment } from "react";
+import ReactDOM from "react-dom";
+import classnames from "classnames";
+import TransitionGroupContext from "react-transition-group/TransitionGroupContext";
+import Transition, { EXITED, TransitionStatus } from "react-transition-group/Transition";
+import CSSTransition, { CSSTransitionProps } from "react-transition-group/CSSTransition";
+
+export const version = "%VERSION%";
+
+export interface PopupProps extends React.HTMLAttributes<any> {
+	prefix: string;
+	style: React.CSSProperties;
+	className: string;
+	rootClassName: string;
+
+	visible: boolean;
+	fixed: boolean;
+	lazyMount: boolean;
+	transition: CSSTransitionProps;
+	destroyOnHide: boolean;
+	getPosition?: (
+		dom: HTMLElement
+	) => {
+		top?: number | string;
+		left?: number | string;
+		right?: number | string;
+		bottom?: number | string;
+	};
+
+	mask: boolean;
+	maskStyle: React.CSSProperties;
+	maskProps: React.HTMLAttributes<any>;
+	maskClassName: string;
+	maskTransition: CSSTransitionProps;
+
+	component: React.ElementType;
+	maskComponent: React.ElementType;
+	rootComponent: React.ElementType;
+}
+
+class Popup extends React.Component<PopupProps, {}> {
+	static defaultProps = {
+		prefix: "rw-popup",
+		style: {},
+		className: "",
+		rootClassName: "",
+
+		fixed: false,
+		//初始未显示的情况下不渲染组件，作用同react-transition-group的mountOnEnter
+		lazyMount: true,
+		//popup动画配置参数参考react-transition-group
+		//http://reactcommunity.org/react-transition-group/css-transition
+		transition: {},
+		//visible=false时移除组件，作用同react-transition-group的unmountOnExit
+		destroyOnHide: true,
+
+		mask: false,
+		maskStyle: {},
+		maskProps: {},
+		maskClassName: "",
+		//popupMask动画配置参数参考react-transition-group
+		//http://reactcommunity.org/react-transition-group/css-transition
+		maskTransition: {},
+
+		component: "div",
+		maskComponent: "div",
+		rootComponent: Fragment,
+	};
+
+	protected transitionStatus: TransitionStatus = EXITED;
+
+	shouldComponentUpdate(nextProps: PopupProps) {
+		const status = this.transitionStatus;
+		return !(EXITED === status && !nextProps.visible);
+	}
+
+	shouldHide() {
+		const { lazyMount, visible } = this.props;
+		return !visible && !lazyMount;
+	}
+
+	protected _refs: Record<string, React.ReactInstance | null> = {};
+
+	saveRef(key: string, component: React.ReactInstance | null) {
+		this._refs[key] = component;
+	}
+
+	getPopupRootDOM(): React.ReactInstance {
+		return ReactDOM.findDOMNode(this._refs["popupRoot"]);
+	}
+
+	getPopupDOM() {
+		return ReactDOM.findDOMNode(this._refs["popup"]);
+	}
+
+	getPopupMaskDOM(): React.ReactInstance {
+		return ReactDOM.findDOMNode(this._refs["popupMask"]);
+	}
+
+	onEnter(
+		{ onEnter }: CSSTransitionProps,
+		isMask: boolean,
+		node: HTMLElement,
+		appearing: boolean
+	) {
+		const { destroyOnHide, getPosition } = this.props;
+
+		if (!destroyOnHide) {
+			node.style.display = "";
+		}
+
+		if (!isMask && getPosition) {
+			const pos = getPosition(node);
+			const transform = (v?: number | string): any => (typeof v === "number" ? `${v}px` : v);
+
+			if (pos) {
+				if ("left" in pos) {
+					node.style.left = transform(pos.left);
+				}
+				if ("top" in pos) {
+					node.style.top = transform(pos.top);
+				}
+				if ("right" in pos) {
+					node.style.right = transform(pos.right);
+				}
+				if ("bottom" in pos) {
+					node.style.bottom = transform(pos.bottom);
+				}
+			}
+		}
+
+		if (onEnter) {
+			onEnter(node, appearing);
+		}
+	}
+
+	onExited({ onExited }: CSSTransitionProps, isMask: boolean, node: HTMLElement) {
+		const { destroyOnHide } = this.props;
+
+		if (!destroyOnHide) {
+			node.style.display = "none";
+		}
+
+		if (onExited) {
+			onExited(node);
+		}
+	}
+
+	renderPopupMask() {
+		const {
+			prefix,
+			visible,
+			mask,
+			maskProps,
+			maskStyle,
+			maskClassName,
+			maskTransition,
+			lazyMount,
+			destroyOnHide,
+			fixed,
+			maskComponent: MaskComponent,
+		} = this.props;
+
+		const classes: string = classnames(
+			{
+				[`${prefix}-mask`]: true,
+				[`${prefix}-mask-fixed`]: fixed,
+			},
+			maskProps.className,
+			maskClassName
+		);
+
+		const mStyle: React.CSSProperties = {};
+
+		if (this.shouldHide()) {
+			mStyle.display = "none";
+		}
+
+		const TransitionComponent = maskTransition.classNames ? CSSTransition : Transition;
+
+		return (
+			<TransitionComponent
+				enter
+				exit
+				appear
+				// classNames={{}}
+				// timeout={timeout}
+				addEndListener={(_, cb) => maskTransition.timeout == null && cb()}
+				{...maskTransition}
+				in={mask && visible}
+				onEnter={this.onEnter.bind(this, maskTransition, true)}
+				onExited={this.onExited.bind(this, maskTransition, true)}
+				unmountOnExit={destroyOnHide}
+				mountOnEnter={lazyMount}
+			>
+				<MaskComponent
+					{...maskProps}
+					ref={this.saveRef.bind(this, "popupMask")}
+					style={{
+						...maskProps.style,
+						...maskStyle,
+						...mStyle,
+					}}
+					className={classes}
+				/>
+			</TransitionComponent>
+		);
+	}
+
+	render() {
+		const {
+			style,
+			prefix,
+			className,
+			fixed,
+			visible,
+			children,
+			lazyMount,
+			destroyOnHide,
+			rootClassName,
+			rootComponent: RootComponent,
+			component: Component,
+			transition,
+			...childProps
+		} = this.props;
+
+		delete childProps.mask;
+		delete childProps.maskProps;
+		delete childProps.maskStyle;
+		delete childProps.maskClassName;
+		delete childProps.maskComponent;
+		delete childProps.maskTransition;
+		delete childProps.getPosition;
+
+		const rootProps = {
+			ref: this.saveRef.bind(this, "popupRoot"),
+			[rootClassName]: rootClassName,
+		};
+		if (RootComponent === Fragment) {
+			delete rootProps.ref;
+			delete rootProps[rootClassName];
+		}
+
+		const classes: string = classnames({
+			[prefix]: true,
+			[`${prefix}-fixed`]: fixed,
+			[className]: className,
+		});
+
+		const pStyle: React.CSSProperties = {};
+
+		if (this.shouldHide()) {
+			pStyle.display = "none";
+		}
+
+		const TransitionComponent = transition.classNames ? CSSTransition : Transition;
+
+		return (
+			<TransitionGroupContext.Provider value={null}>
+				<RootComponent>
+					{this.renderPopupMask()}
+					<TransitionComponent
+						enter
+						exit
+						appear
+						addEndListener={(_, cb) => transition.timeout == null && cb()}
+						{...transition}
+						in={visible}
+						onEnter={this.onEnter.bind(this, transition, false)}
+						onExited={this.onExited.bind(this, transition, false)}
+						unmountOnExit={destroyOnHide}
+						mountOnEnter={lazyMount}
+					>
+						{status => {
+							this.transitionStatus = status;
+							return (
+								<Component
+									{...childProps}
+									ref={this.saveRef.bind(this, "popup")}
+									style={{
+										...style,
+										...pStyle,
+									}}
+									className={classes}
+								>
+									{typeof children === "function" ? children(status) : children}
+								</Component>
+							);
+						}}
+					</TransitionComponent>
+				</RootComponent>
+			</TransitionGroupContext.Provider>
+		);
+	}
+}
+
+export default Popup;
