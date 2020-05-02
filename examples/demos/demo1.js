@@ -25,6 +25,8 @@ export default class DEMO extends Component {
 			<div>
 				<button onClick={this.toggleClick}>{visible ? "关闭" : "显示"}</button>
 				<Popup
+					rootComponent="div"
+					rootClassName="p-root"
 					visible={visible}
 					transition={{
 						timeout: 500,

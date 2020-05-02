@@ -265,7 +265,7 @@ export class Popup extends React.Component<PopupProps, {}> {
 
 		return (
 			<TransitionGroupContext.Provider value={null}>
-				<RootComponent>
+				<RootComponent {...rootProps}>
 					{this.renderPopupMask()}
 					{wrapContent(
 						<TransitionComponent
