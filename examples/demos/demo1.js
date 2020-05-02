@@ -27,6 +27,13 @@ export default class DEMO extends Component {
 				<Popup
 					rootComponent="div"
 					rootClassName="p-root"
+					rootStyle={{
+						zIndex: 0,
+						tabIndex: -1,
+					}}
+					rootProps={{
+						"data-x": "1",
+					}}
 					visible={visible}
 					transition={{
 						timeout: 500,

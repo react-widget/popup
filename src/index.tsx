@@ -12,6 +12,8 @@ export interface PopupProps extends React.HTMLAttributes<any> {
 	style: React.CSSProperties;
 	className: string;
 	rootClassName: string;
+	rootStyle: React.CSSProperties;
+	rootProps: React.HTMLAttributes<any>;
 
 	visible: boolean;
 	fixed: boolean;
@@ -46,6 +48,8 @@ export class Popup extends React.Component<PopupProps, {}> {
 		style: {},
 		className: "",
 		rootClassName: "",
+		rootStyle: {},
+		rootProps: {},
 
 		visible: false,
 		fixed: false,
@@ -204,8 +208,8 @@ export class Popup extends React.Component<PopupProps, {}> {
 					{...maskProps}
 					ref={this.saveRef.bind(this, "popupMask")}
 					style={{
-						...maskProps.style,
 						...maskStyle,
+						...maskProps.style,
 						...mStyle,
 					}}
 					className={classes}
@@ -225,6 +229,8 @@ export class Popup extends React.Component<PopupProps, {}> {
 			lazyMount,
 			destroyOnClose,
 			rootClassName,
+			rootStyle,
+			rootProps,
 			rootComponent: RootComponent,
 			component: Component,
 			transition,
@@ -240,13 +246,19 @@ export class Popup extends React.Component<PopupProps, {}> {
 		delete childProps.maskTransition;
 		delete childProps.getPosition;
 
-		const rootProps = {
+		let rootComponentProps: {} = {
+			...rootProps,
+			className: classnames(rootClassName, rootProps.className),
+			style: {
+				...rootStyle,
+				...rootProps.style,
+			},
 			ref: this.saveRef.bind(this, "popupRoot"),
-			[rootClassName]: rootClassName,
 		};
 		if (RootComponent === Fragment) {
-			delete rootProps.ref;
-			delete rootProps[rootClassName];
+			rootComponentProps = {
+				ref: this.saveRef.bind(this, "popupRoot"),
+			};
 		}
 
 		const classes: string = classnames({
@@ -264,7 +276,7 @@ export class Popup extends React.Component<PopupProps, {}> {
 		const TransitionComponent = transition.classNames ? CSSTransition : Transition;
 
 		const popup = (
-			<RootComponent {...rootProps}>
+			<RootComponent {...rootComponentProps}>
 				{this.renderPopupMask()}
 				{wrapContent(
 					<TransitionComponent
