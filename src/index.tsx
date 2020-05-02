@@ -71,7 +71,7 @@ export class Popup extends React.Component<PopupProps, {}> {
 
 		component: "div",
 		maskComponent: "div",
-		rootComponent: Fragment,
+		rootComponent: "div",
 
 		wrapContent: (node: React.ReactNode) => {
 			return node;
@@ -79,6 +79,7 @@ export class Popup extends React.Component<PopupProps, {}> {
 	};
 
 	protected transitionStatus: TransitionStatus = EXITED;
+	protected rootRef = React.createRef<HTMLElement>();
 
 	shouldComponentUpdate(nextProps: PopupProps) {
 		const status = this.transitionStatus;
@@ -116,8 +117,9 @@ export class Popup extends React.Component<PopupProps, {}> {
 	) {
 		const { destroyOnClose, getPosition } = this.props;
 
-		if (!destroyOnClose) {
-			node.style.display = "";
+		if (!destroyOnClose && this.rootRef.current) {
+			this.rootRef.current.style.display = "";
+			// node.style.display = "";
 		}
 
 		if (!isMask && getPosition) {
@@ -148,8 +150,9 @@ export class Popup extends React.Component<PopupProps, {}> {
 	onExited({ onExited }: CSSTransitionProps, isMask: boolean, node: HTMLElement) {
 		const { destroyOnClose } = this.props;
 
-		if (!destroyOnClose) {
-			node.style.display = "none";
+		if (!destroyOnClose && this.rootRef.current) {
+			this.rootRef.current.style.display = "none";
+			// node.style.display = "none";
 		}
 
 		if (onExited) {
@@ -181,11 +184,11 @@ export class Popup extends React.Component<PopupProps, {}> {
 			maskClassName
 		);
 
-		const mStyle: React.CSSProperties = {};
+		// const mStyle: React.CSSProperties = {};
 
-		if (this.shouldHide()) {
-			mStyle.display = "none";
-		}
+		// if (this.shouldHide()) {
+		// 	mStyle.display = "none";
+		// }
 
 		const TransitionComponent = maskTransition.classNames ? CSSTransition : Transition;
 
@@ -210,7 +213,7 @@ export class Popup extends React.Component<PopupProps, {}> {
 					style={{
 						...maskStyle,
 						...maskProps.style,
-						...mStyle,
+						// ...mStyle,
 					}}
 					className={classes}
 				/>
@@ -246,12 +249,19 @@ export class Popup extends React.Component<PopupProps, {}> {
 		delete childProps.maskTransition;
 		delete childProps.getPosition;
 
+		const rStyle: React.CSSProperties = {};
+
+		if (this.shouldHide()) {
+			rStyle.display = "none";
+		}
+
 		let rootComponentProps: {} = {
 			...rootProps,
 			className: classnames(rootClassName, rootProps.className),
 			style: {
 				...rootStyle,
 				...rootProps.style,
+				...rStyle,
 			},
 			ref: this.saveRef.bind(this, "popupRoot"),
 		};
@@ -267,16 +277,10 @@ export class Popup extends React.Component<PopupProps, {}> {
 			[className]: className,
 		});
 
-		const pStyle: React.CSSProperties = {};
-
-		if (this.shouldHide()) {
-			pStyle.display = "none";
-		}
-
 		const TransitionComponent = transition.classNames ? CSSTransition : Transition;
 
 		const popup = (
-			<RootComponent {...rootComponentProps}>
+			<RootComponent {...rootComponentProps} ref={this.rootRef}>
 				{this.renderPopupMask()}
 				{wrapContent(
 					<TransitionComponent
@@ -297,10 +301,7 @@ export class Popup extends React.Component<PopupProps, {}> {
 								<Component
 									{...childProps}
 									ref={this.saveRef.bind(this, "popup")}
-									style={{
-										...style,
-										...pStyle,
-									}}
+									style={style}
 									className={classes}
 								>
 									{typeof children === "function" ? children(status) : children}
