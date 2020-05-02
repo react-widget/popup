@@ -45,6 +45,7 @@ export class Popup extends React.Component<PopupProps, {}> {
 		className: "",
 		rootClassName: "",
 
+		visible: false,
 		fixed: false,
 		//初始未显示的情况下不渲染组件，作用同react-transition-group的mountOnEnter
 		lazyMount: true,
