@@ -36,6 +36,8 @@ export interface PopupProps extends React.HTMLAttributes<any> {
 	component: React.ElementType;
 	maskComponent: React.ElementType;
 	rootComponent: React.ElementType;
+
+	wrapContent: (node: React.ReactNode) => React.ReactNode;
 }
 
 export class Popup extends React.Component<PopupProps, {}> {
@@ -66,6 +68,10 @@ export class Popup extends React.Component<PopupProps, {}> {
 		component: "div",
 		maskComponent: "div",
 		rootComponent: Fragment,
+
+		wrapContent: (node: React.ReactNode) => {
+			return node;
+		},
 	};
 
 	protected transitionStatus: TransitionStatus = EXITED;
@@ -222,6 +228,7 @@ export class Popup extends React.Component<PopupProps, {}> {
 			rootComponent: RootComponent,
 			component: Component,
 			transition,
+			wrapContent,
 			...childProps
 		} = this.props;
 
@@ -260,35 +267,39 @@ export class Popup extends React.Component<PopupProps, {}> {
 			<TransitionGroupContext.Provider value={null}>
 				<RootComponent>
 					{this.renderPopupMask()}
-					<TransitionComponent
-						enter
-						exit
-						appear
-						addEndListener={(_, cb) => transition.timeout == null && cb()}
-						{...transition}
-						in={visible}
-						onEnter={this.onEnter.bind(this, transition, false)}
-						onExited={this.onExited.bind(this, transition, false)}
-						unmountOnExit={destroyOnClose}
-						mountOnEnter={lazyMount}
-					>
-						{status => {
-							this.transitionStatus = status;
-							return (
-								<Component
-									{...childProps}
-									ref={this.saveRef.bind(this, "popup")}
-									style={{
-										...style,
-										...pStyle,
-									}}
-									className={classes}
-								>
-									{typeof children === "function" ? children(status) : children}
-								</Component>
-							);
-						}}
-					</TransitionComponent>
+					{wrapContent(
+						<TransitionComponent
+							enter
+							exit
+							appear
+							addEndListener={(_, cb) => transition.timeout == null && cb()}
+							{...transition}
+							in={visible}
+							onEnter={this.onEnter.bind(this, transition, false)}
+							onExited={this.onExited.bind(this, transition, false)}
+							unmountOnExit={destroyOnClose}
+							mountOnEnter={lazyMount}
+						>
+							{status => {
+								this.transitionStatus = status;
+								return (
+									<Component
+										{...childProps}
+										ref={this.saveRef.bind(this, "popup")}
+										style={{
+											...style,
+											...pStyle,
+										}}
+										className={classes}
+									>
+										{typeof children === "function"
+											? children(status)
+											: children}
+									</Component>
+								);
+							}}
+						</TransitionComponent>
+					)}
 				</RootComponent>
 			</TransitionGroupContext.Provider>
 		);

@@ -59,6 +59,8 @@ interface PopupProps {
     maskComponent?: React.ElementType;
     rootComponent?: React.ElementType;
 
+    wrapContent?: (node: React.ReactNode) => React.ReactNode;
+
     [prop: string]: any;
 }
 ```
