@@ -41,7 +41,7 @@ interface PopupProps {
     className?: string;
     rootClassName?: string;
     rootStyle: React.CSSProperties;
-	rootProps: React.HTMLAttributes<any>;
+    rootProps: React.HTMLAttributes<any>;
 
     fixed?: boolean;
     visible: boolean;
