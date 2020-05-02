@@ -263,44 +263,60 @@ export class Popup extends React.Component<PopupProps, {}> {
 
 		const TransitionComponent = transition.classNames ? CSSTransition : Transition;
 
+		const popup = (
+			<RootComponent {...rootProps}>
+				{this.renderPopupMask()}
+				{wrapContent(
+					<TransitionComponent
+						enter
+						exit
+						appear
+						addEndListener={(_, cb) => transition.timeout == null && cb()}
+						{...transition}
+						in={visible}
+						onEnter={this.onEnter.bind(this, transition, false)}
+						onExited={this.onExited.bind(this, transition, false)}
+						unmountOnExit={destroyOnClose}
+						mountOnEnter={lazyMount}
+					>
+						{status => {
+							this.transitionStatus = status;
+							return (
+								<Component
+									{...childProps}
+									ref={this.saveRef.bind(this, "popup")}
+									style={{
+										...style,
+										...pStyle,
+									}}
+									className={classes}
+								>
+									{typeof children === "function" ? children(status) : children}
+								</Component>
+							);
+						}}
+					</TransitionComponent>
+				)}
+			</RootComponent>
+		);
+
 		return (
 			<TransitionGroupContext.Provider value={null}>
-				<RootComponent {...rootProps}>
-					{this.renderPopupMask()}
-					{wrapContent(
-						<TransitionComponent
-							enter
-							exit
-							appear
-							addEndListener={(_, cb) => transition.timeout == null && cb()}
-							{...transition}
-							in={visible}
-							onEnter={this.onEnter.bind(this, transition, false)}
-							onExited={this.onExited.bind(this, transition, false)}
-							unmountOnExit={destroyOnClose}
-							mountOnEnter={lazyMount}
-						>
-							{status => {
-								this.transitionStatus = status;
-								return (
-									<Component
-										{...childProps}
-										ref={this.saveRef.bind(this, "popup")}
-										style={{
-											...style,
-											...pStyle,
-										}}
-										className={classes}
-									>
-										{typeof children === "function"
-											? children(status)
-											: children}
-									</Component>
-								);
-							}}
-						</TransitionComponent>
-					)}
-				</RootComponent>
+				<Transition
+					enter
+					exit
+					appear
+					addEndListener={
+						transition.addEndListener || ((_, cb) => transition.timeout == null && cb())
+					}
+					timeout={transition.timeout}
+					in={visible}
+					unmountOnExit={destroyOnClose}
+					mountOnEnter={lazyMount}
+				>
+					{/* Return the same reference, disable re render */}
+					{() => popup}
+				</Transition>
 			</TransitionGroupContext.Provider>
 		);
 	}
