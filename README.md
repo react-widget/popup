@@ -36,7 +36,7 @@ type statusTypes = 'unmounted' | 'exited' | 'entering' | 'entered' | 'exiting' ;
 
 interface PopupProps {
     children?: React.ReactNode | (status: statusTypes) => React.ReactNode;
-    prefix?: string;
+    prefixCls?: string;
     style?: React.CSSProperties;
     className?: string;
     rootClassName?: string;
@@ -46,7 +46,7 @@ interface PopupProps {
     lazyMount?: boolean;
     //http://reactcommunity.org/react-transition-group/css-transition
     transition?: CSSTransitionProps;
-    destroyOnHide?: boolean;
+    destroyOnClose?: boolean;
 
     mask?: boolean;
     maskStyle?: React.CSSProperties;
@@ -67,7 +67,7 @@ interface PopupProps {
 
 ```js
 {
-    prefix: "rw-popup",
+    prefixCls: "rw-popup",
     style: {},
     className: "",
     rootClassName: "",
@@ -75,7 +75,7 @@ interface PopupProps {
     fixed: false,
     lazyMount: true,
     transition: {},
-    destroyOnHide: true,
+    destroyOnClose: true,
 
     mask: false,
     maskStyle: {},

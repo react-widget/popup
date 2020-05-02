@@ -74,7 +74,7 @@ export default class DEMO extends Component {
 					<Popup
 						visible={visible}
 						mask={mask}
-						destroyOnHide={false}
+						destroyOnClose={false}
 						style={{
 							left: 10,
 							top: 10,

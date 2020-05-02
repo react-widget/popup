@@ -8,7 +8,7 @@ import CSSTransition, { CSSTransitionProps } from "react-transition-group/CSSTra
 export const version = "%VERSION%";
 
 export interface PopupProps extends React.HTMLAttributes<any> {
-	prefix: string;
+	prefixCls: string;
 	style: React.CSSProperties;
 	className: string;
 	rootClassName: string;
@@ -17,7 +17,7 @@ export interface PopupProps extends React.HTMLAttributes<any> {
 	fixed: boolean;
 	lazyMount: boolean;
 	transition: CSSTransitionProps;
-	destroyOnHide: boolean;
+	destroyOnClose: boolean;
 	getPosition?: (
 		dom: HTMLElement
 	) => {
@@ -38,9 +38,9 @@ export interface PopupProps extends React.HTMLAttributes<any> {
 	rootComponent: React.ElementType;
 }
 
-class Popup extends React.Component<PopupProps, {}> {
+export class Popup extends React.Component<PopupProps, {}> {
 	static defaultProps = {
-		prefix: "rw-popup",
+		prefixCls: "rw-popup",
 		style: {},
 		className: "",
 		rootClassName: "",
@@ -52,7 +52,7 @@ class Popup extends React.Component<PopupProps, {}> {
 		//http://reactcommunity.org/react-transition-group/css-transition
 		transition: {},
 		//visible=false时移除组件，作用同react-transition-group的unmountOnExit
-		destroyOnHide: true,
+		destroyOnClose: true,
 
 		mask: false,
 		maskStyle: {},
@@ -103,9 +103,9 @@ class Popup extends React.Component<PopupProps, {}> {
 		node: HTMLElement,
 		appearing: boolean
 	) {
-		const { destroyOnHide, getPosition } = this.props;
+		const { destroyOnClose, getPosition } = this.props;
 
-		if (!destroyOnHide) {
+		if (!destroyOnClose) {
 			node.style.display = "";
 		}
 
@@ -135,9 +135,9 @@ class Popup extends React.Component<PopupProps, {}> {
 	}
 
 	onExited({ onExited }: CSSTransitionProps, isMask: boolean, node: HTMLElement) {
-		const { destroyOnHide } = this.props;
+		const { destroyOnClose } = this.props;
 
-		if (!destroyOnHide) {
+		if (!destroyOnClose) {
 			node.style.display = "none";
 		}
 
@@ -148,7 +148,7 @@ class Popup extends React.Component<PopupProps, {}> {
 
 	renderPopupMask() {
 		const {
-			prefix,
+			prefixCls,
 			visible,
 			mask,
 			maskProps,
@@ -156,15 +156,15 @@ class Popup extends React.Component<PopupProps, {}> {
 			maskClassName,
 			maskTransition,
 			lazyMount,
-			destroyOnHide,
+			destroyOnClose,
 			fixed,
 			maskComponent: MaskComponent,
 		} = this.props;
 
 		const classes: string = classnames(
 			{
-				[`${prefix}-mask`]: true,
-				[`${prefix}-mask-fixed`]: fixed,
+				[`${prefixCls}-mask`]: true,
+				[`${prefixCls}-mask-fixed`]: fixed,
 			},
 			maskProps.className,
 			maskClassName
@@ -190,7 +190,7 @@ class Popup extends React.Component<PopupProps, {}> {
 				in={mask && visible}
 				onEnter={this.onEnter.bind(this, maskTransition, true)}
 				onExited={this.onExited.bind(this, maskTransition, true)}
-				unmountOnExit={destroyOnHide}
+				unmountOnExit={destroyOnClose}
 				mountOnEnter={lazyMount}
 			>
 				<MaskComponent
@@ -210,13 +210,13 @@ class Popup extends React.Component<PopupProps, {}> {
 	render() {
 		const {
 			style,
-			prefix,
+			prefixCls,
 			className,
 			fixed,
 			visible,
 			children,
 			lazyMount,
-			destroyOnHide,
+			destroyOnClose,
 			rootClassName,
 			rootComponent: RootComponent,
 			component: Component,
@@ -242,8 +242,8 @@ class Popup extends React.Component<PopupProps, {}> {
 		}
 
 		const classes: string = classnames({
-			[prefix]: true,
-			[`${prefix}-fixed`]: fixed,
+			[prefixCls]: true,
+			[`${prefixCls}-fixed`]: fixed,
 			[className]: className,
 		});
 
@@ -268,7 +268,7 @@ class Popup extends React.Component<PopupProps, {}> {
 						in={visible}
 						onEnter={this.onEnter.bind(this, transition, false)}
 						onExited={this.onExited.bind(this, transition, false)}
-						unmountOnExit={destroyOnHide}
+						unmountOnExit={destroyOnClose}
 						mountOnEnter={lazyMount}
 					>
 						{status => {

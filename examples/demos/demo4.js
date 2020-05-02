@@ -65,7 +65,7 @@ export default class DEMO extends Component {
 					<Popup
 						visible={visible}
 						mask={mask}
-						destroyOnHide={true}
+						destroyOnClose={true}
 						style={{
 							background: "#ff5454",
 							color: "#FFF",
