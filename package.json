@@ -1,6 +1,6 @@
 {
 	"name": "react-widget-popup",
-	"version": "3.3.1",
+	"version": "3.4.0",
 	"description": "",
 	"main": "cjs/index.js",
 	"module": "esm/index.js",
@@ -37,6 +37,7 @@
 		"cjs",
 		"esm",
 		"lib",
+		"style",
 		"*.md"
 	],
 	"scripts": {

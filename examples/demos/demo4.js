@@ -26,7 +26,7 @@ const maskAnimateClassNames = {
 export default class DEMO extends Component {
 	state = {
 		visible: true,
-		mask: true,
+		mask: false,
 	};
 
 	toggleClick = e => {
@@ -45,6 +45,8 @@ export default class DEMO extends Component {
 
 	render() {
 		const { visible, mask } = this.state;
+
+		console.log(mask, "render");
 
 		return (
 			<Fragment>
@@ -65,6 +67,7 @@ export default class DEMO extends Component {
 					<Popup
 						visible={visible}
 						mask={mask}
+						lazy={false}
 						destroyOnClose={true}
 						style={{
 							background: "#ff5454",
@@ -84,6 +87,7 @@ export default class DEMO extends Component {
 								this.toggleClick2();
 							},
 						}}
+						destroyOnClose={false}
 						fixed
 					>
 						<div>fixed test</div>

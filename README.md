@@ -40,12 +40,14 @@ interface PopupProps {
     style?: React.CSSProperties;
     className?: string;
     rootClassName?: string;
-    rootStyle: React.CSSProperties;
-    rootProps: React.HTMLAttributes<any>;
+    rootStyle?: React.CSSProperties;
+    rootProps?: React.HTMLAttributes<any>;
 
     fixed?: boolean;
     visible: boolean;
-    lazyMount?: boolean;
+    lazy?: boolean;
+	forceRender?: boolean;
+
     //http://reactcommunity.org/react-transition-group/css-transition
     transition?: CSSTransitionProps;
     destroyOnClose?: boolean;
@@ -77,7 +79,7 @@ interface PopupProps {
     rootClassName: "",
 
     fixed: false,
-    lazyMount: true,
+    lazy: true,
     transition: {},
     destroyOnClose: true,
 
