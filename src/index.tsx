@@ -167,6 +167,30 @@ export class Popup extends React.Component<PopupProps, {}> {
 		}
 	}
 
+	onEntered({ onEntered }, isMask: boolean, node: HTMLElement, appearing: boolean) {
+		if (isMask) {
+			this.inMaskTransition = false;
+		} else {
+			this.inTransition = false;
+		}
+
+		if (onEntered) {
+			onEntered(node, appearing);
+		}
+	}
+
+	onExit({ onExit }: CSSTransitionProps, isMask: boolean, node: HTMLElement) {
+		if (isMask) {
+			this.inMaskTransition = true;
+		} else {
+			this.inTransition = true;
+		}
+
+		if (onExit) {
+			onExit(node);
+		}
+	}
+
 	onExited({ onExited }: CSSTransitionProps, isMask: boolean, node: HTMLElement) {
 		const { destroyOnClose, visible } = this.props;
 		const rootElement = findDOMNode(this.rootInstance) as HTMLElement;
@@ -233,6 +257,8 @@ export class Popup extends React.Component<PopupProps, {}> {
 				{...maskTransition}
 				in={mask && visible}
 				onEnter={this.onEnter.bind(this, maskTransition, true)}
+				onEntered={this.onEntered.bind(this, maskTransition, true)}
+				onExit={this.onExit.bind(this, maskTransition, true)}
 				onExited={this.onExited.bind(this, maskTransition, true)}
 				unmountOnExit={destroyOnClose}
 				mountOnEnter={lazy}
@@ -318,6 +344,8 @@ export class Popup extends React.Component<PopupProps, {}> {
 						{...transition}
 						in={visible}
 						onEnter={this.onEnter.bind(this, transition, false)}
+						onEntered={this.onEntered.bind(this, transition, false)}
+						onExit={this.onExit.bind(this, transition, false)}
 						onExited={this.onExited.bind(this, transition, false)}
 						unmountOnExit={destroyOnClose}
 						mountOnEnter={lazy}
