@@ -27,6 +27,7 @@ export default class DEMO extends Component {
 	state = {
 		visible: true,
 		mask: false,
+		disableMask: false,
 	};
 
 	toggleClick = e => {
@@ -43,8 +44,15 @@ export default class DEMO extends Component {
 		});
 	};
 
+	toggleClick3 = e => {
+		const { disableMask } = this.state;
+		this.setState({
+			disableMask: !disableMask,
+		});
+	};
+
 	render() {
-		const { visible, mask } = this.state;
+		const { visible, mask, disableMask } = this.state;
 
 		console.log(mask, "render");
 
@@ -54,6 +62,9 @@ export default class DEMO extends Component {
 					<button onClick={this.toggleClick}>{visible ? "关闭" : "显示"}</button>
 					<button onClick={this.toggleClick2}>
 						{mask ? "关闭遮罩层" : "显示遮罩层"}
+					</button>
+					<button onClick={this.toggleClick3}>
+						{!disableMask ? "禁用遮罩层" : "启用遮罩层"}
 					</button>
 					<button onClick={() => this.forceUpdate()}>refresh</button>
 				</div>
@@ -65,6 +76,7 @@ export default class DEMO extends Component {
 					}}
 				>
 					<Popup
+						disableMask={disableMask}
 						visible={visible}
 						mask={mask}
 						lazy={false}

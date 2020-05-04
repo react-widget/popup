@@ -31,6 +31,7 @@ export interface PopupProps extends React.HTMLAttributes<any> {
 		bottom?: number | string;
 	};
 
+	disableMask?: boolean;
 	mask?: boolean;
 	maskStyle?: React.CSSProperties;
 	maskProps?: React.HTMLAttributes<any>;
@@ -65,6 +66,7 @@ export class Popup extends React.Component<PopupProps, {}> {
 		//visible=false时移除组件，作用同react-transition-group的unmountOnExit
 		destroyOnClose: true,
 
+		disableMask: false,
 		mask: false,
 		maskStyle: {},
 		maskProps: {},
@@ -265,6 +267,7 @@ export class Popup extends React.Component<PopupProps, {}> {
 			component,
 			transition,
 			wrapContent,
+			disableMask,
 			...childProps
 		} = this.props;
 
@@ -305,7 +308,7 @@ export class Popup extends React.Component<PopupProps, {}> {
 
 		const popup = (
 			<RootComponent {...rootComponentProps} ref={this.refHandlers.root}>
-				{this.renderPopupMask()}
+				{!disableMask && this.renderPopupMask()}
 				{wrapContent!(
 					<TransitionComponent
 						enter

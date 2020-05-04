@@ -52,6 +52,7 @@ interface PopupProps {
     transition?: CSSTransitionProps;
     destroyOnClose?: boolean;
 
+    disableMask?: boolean;
     mask?: boolean;
     maskStyle?: React.CSSProperties;
     maskProps?: {};
@@ -83,6 +84,7 @@ interface PopupProps {
     transition: {},
     destroyOnClose: true,
 
+    disableMask: false,
     mask: false,
     maskStyle: {},
     maskProps: {},
@@ -91,7 +93,7 @@ interface PopupProps {
 
     component: "div",
     maskComponent: "div",
-    rootComponent: Fragment
+    rootComponent: "div"
 }
 ```
 
