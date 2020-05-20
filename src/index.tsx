@@ -46,7 +46,7 @@ export interface PopupProps extends React.HTMLAttributes<any> {
 }
 
 export class Popup extends React.Component<PopupProps, {}> {
-	static defaultProps = {
+	static defaultProps: PopupProps = {
 		prefixCls: "rw-popup",
 		style: {},
 		className: "",
@@ -62,7 +62,7 @@ export class Popup extends React.Component<PopupProps, {}> {
 		forceRender: false,
 		//popup动画配置参数参考react-transition-group
 		//http://reactcommunity.org/react-transition-group/css-transition
-		transition: {},
+		transition: {} as CSSTransitionProps,
 		//visible=false时移除组件，作用同react-transition-group的unmountOnExit
 		destroyOnClose: true,
 
@@ -73,7 +73,7 @@ export class Popup extends React.Component<PopupProps, {}> {
 		maskClassName: "",
 		//popupMask动画配置参数参考react-transition-group
 		//http://reactcommunity.org/react-transition-group/css-transition
-		maskTransition: {},
+		maskTransition: {} as CSSTransitionProps,
 
 		component: "div",
 		maskComponent: "div",
@@ -98,6 +98,18 @@ export class Popup extends React.Component<PopupProps, {}> {
 		mask: (node: React.ReactInstance) => (this.maskInstance = node),
 	};
 
+	getRootDOM(): Element | null {
+		return findDOMNode(this.rootInstance) as Element | null;
+	}
+
+	getPopupDOM(): Element | null {
+		return findDOMNode(this.popupInstance) as Element | null;
+	}
+
+	getMaskDOM(): Element | null {
+		return findDOMNode(this.maskInstance) as Element | null;
+	}
+
 	shouldComponentUpdate(nextProps: PopupProps) {
 		return nextProps.forceRender || !(EXITED === this.transitionStatus && !nextProps.visible);
 	}
@@ -109,13 +121,29 @@ export class Popup extends React.Component<PopupProps, {}> {
 		const maskElement = findDOMNode(this.maskInstance) as HTMLElement;
 
 		if (!visible && !lazy) {
-			if (rootElement) rootElement.style.display = "none";
-			if (popupElement) popupElement.style.display = "none";
-			if (maskElement) maskElement.style.display = "none";
+			if (rootElement) {
+				rootElement.style.display = "none";
+				// @ts-ignore
+				rootElement.__popupHide = true;
+			}
+			if (popupElement) {
+				popupElement.style.display = "none";
+				// @ts-ignore
+				popupElement.__popupHide = true;
+			}
+			if (maskElement) {
+				maskElement.style.display = "none";
+				// @ts-ignore
+				maskElement.__popupHide = true;
+			}
 		}
 
 		if (visible && !mask) {
-			if (maskElement) maskElement.style.display = "none";
+			if (maskElement) {
+				maskElement.style.display = "none";
+				// @ts-ignore
+				maskElement.__popupHide = true;
+			}
 		}
 	}
 
@@ -136,11 +164,26 @@ export class Popup extends React.Component<PopupProps, {}> {
 			this.inTransition = true;
 		}
 
-		if (!destroyOnClose) {
-			if (rootElement) rootElement.style.display = "";
-			if (!isMask && popupElement) popupElement.style.display = "";
-			if (isMask && maskElement) maskElement.style.display = "";
+		// if (!destroyOnClose) {
+		//@ts-ignore
+		if (rootElement && rootElement.__popupHide) {
+			rootElement.style.display = "";
+			//@ts-ignore
+			delete rootElement.__popupHide;
 		}
+		//@ts-ignore
+		if (!isMask && popupElement && popupElement.__popupHide) {
+			popupElement.style.display = "";
+			//@ts-ignore
+			delete popupElement.__popupHide;
+		}
+		//@ts-ignore
+		if (isMask && maskElement && maskElement.__popupHide) {
+			maskElement.style.display = "";
+			//@ts-ignore
+			delete maskElement.__popupHide;
+		}
+		// }
 
 		if (!isMask && getPosition) {
 			const pos = getPosition(node);
@@ -206,12 +249,18 @@ export class Popup extends React.Component<PopupProps, {}> {
 		if (!destroyOnClose) {
 			if (!visible && !this.inMaskTransition && !this.inTransition && rootElement) {
 				rootElement.style.display = "none";
+				// @ts-ignore
+				rootElement.__popupHide = true;
 			}
 			if (!isMask && popupElement) {
 				popupElement.style.display = "none";
+				// @ts-ignore
+				popupElement.__popupHide = true;
 			}
 			if (isMask && maskElement) {
 				maskElement.style.display = "none";
+				// @ts-ignore
+				maskElement.__popupHide = true;
 			}
 		}
 
@@ -350,7 +399,7 @@ export class Popup extends React.Component<PopupProps, {}> {
 						unmountOnExit={destroyOnClose}
 						mountOnEnter={lazy}
 					>
-						{status => {
+						{(status) => {
 							this.transitionStatus = status;
 							return (
 								<Component
