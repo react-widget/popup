@@ -20,7 +20,7 @@ export interface PopupProps extends React.HTMLAttributes<any> {
 	lazy?: boolean;
 	forceRender?: boolean;
 
-	transition?: CSSTransitionProps;
+	transition?: Partial<CSSTransitionProps>;
 	destroyOnClose?: boolean;
 	getPosition?: (
 		dom: HTMLElement
@@ -36,7 +36,7 @@ export interface PopupProps extends React.HTMLAttributes<any> {
 	maskStyle?: React.CSSProperties;
 	maskProps?: React.HTMLAttributes<any>;
 	maskClassName?: string;
-	maskTransition?: CSSTransitionProps;
+	maskTransition?: Partial<CSSTransitionProps>;
 
 	component?: React.ElementType;
 	maskComponent?: React.ElementType;
