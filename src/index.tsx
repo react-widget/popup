@@ -360,7 +360,7 @@ export class Popup extends React.Component<PopupProps, {}> {
 
 		let rootComponentProps: {} = {
 			...rootProps,
-			className: classnames(rootClassName, rootProps!.className),
+			className: classnames(`${prefixCls}-root`, rootClassName, rootProps!.className),
 			style: {
 				...rootStyle,
 				...rootProps!.style,
