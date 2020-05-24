@@ -98,16 +98,16 @@ export class Popup extends React.Component<PopupProps, {}> {
 		mask: (node: React.ReactInstance) => (this.maskInstance = node),
 	};
 
-	getRootDOM(): Element | null {
-		return findDOMNode(this.rootInstance) as Element | null;
+	getRootDOM(): HTMLElement | null {
+		return findDOMNode(this.rootInstance) as HTMLElement | null;
 	}
 
-	getPopupDOM(): Element | null {
-		return findDOMNode(this.popupInstance) as Element | null;
+	getPopupDOM(): HTMLElement | null {
+		return findDOMNode(this.popupInstance) as HTMLElement | null;
 	}
 
-	getMaskDOM(): Element | null {
-		return findDOMNode(this.maskInstance) as Element | null;
+	getMaskDOM(): HTMLElement | null {
+		return findDOMNode(this.maskInstance) as HTMLElement | null;
 	}
 
 	shouldComponentUpdate(nextProps: PopupProps) {
