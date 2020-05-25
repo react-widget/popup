@@ -8,20 +8,31 @@ import CSSTransition, { CSSTransitionProps } from "react-transition-group/CSSTra
 export const version = "%VERSION%";
 
 export interface PopupProps extends React.HTMLAttributes<any> {
+	/** 样式前缀 */
 	prefixCls?: string;
+	/** popup元素样式 */
 	style?: React.CSSProperties;
+	/** popupCSS样式名 */
 	className?: string;
+	/** popup根节点CSS样式名 */
 	rootClassName?: string;
+	/** popup根节点样式 */
 	rootStyle?: React.CSSProperties;
+	/** popup元素属性 */
 	rootProps?: React.HTMLAttributes<any>;
-
+	/** 否显示popup(受控) */
 	visible?: boolean;
+	/** 使用fixed定位popup */
 	fixed?: boolean;
+	/** 初始不显示的情况下不渲染组件 */
 	lazy?: boolean;
+	/** 当destroyOnClose=false时，组件刷新时强制更新 */
 	forceRender?: boolean;
-
+	/** CSSTransition参数，参考：react-transition-group */
 	transition?: Partial<CSSTransitionProps>;
+	/** 隐藏销毁弹组件 */
 	destroyOnClose?: boolean;
+	/** popup显示用于获取元素显示位置信息，大部分情况下建议直接用style */
 	getPosition?: (
 		dom: HTMLElement
 	) => {
@@ -30,18 +41,25 @@ export interface PopupProps extends React.HTMLAttributes<any> {
 		right?: number | string;
 		bottom?: number | string;
 	};
-
+	/** 禁用mask */
 	disableMask?: boolean;
+	/** 是否开启遮罩层 */
 	mask?: boolean;
+	/** 遮罩层样式 */
 	maskStyle?: React.CSSProperties;
+	/** 遮罩层组件属性 */
 	maskProps?: React.HTMLAttributes<any>;
+	/** 遮罩层样式名称 */
 	maskClassName?: string;
+	/** CSSTransition参数，参考：react-transition-group */
 	maskTransition?: Partial<CSSTransitionProps>;
-
+	/** 内部使用 */
 	component?: React.ElementType;
+	/** 内部使用 */
 	maskComponent?: React.ElementType;
+	/** 内部使用 */
 	rootComponent?: React.ElementType;
-
+	/** 内部使用 */
 	wrapContent?: (node: React.ReactNode) => React.ReactNode;
 }
 
@@ -147,13 +165,13 @@ export class Popup extends React.Component<PopupProps, {}> {
 		}
 	}
 
-	onEnter(
+	protected onEnter(
 		{ onEnter }: CSSTransitionProps,
 		isMask: boolean,
 		node: HTMLElement,
 		appearing: boolean
 	) {
-		const { destroyOnClose, getPosition } = this.props;
+		const { getPosition } = this.props;
 		const rootElement = findDOMNode(this.rootInstance) as HTMLElement;
 		const popupElement = findDOMNode(this.popupInstance) as HTMLElement;
 		const maskElement = findDOMNode(this.maskInstance) as HTMLElement;
@@ -210,7 +228,7 @@ export class Popup extends React.Component<PopupProps, {}> {
 		}
 	}
 
-	onEntered({ onEntered }, isMask: boolean, node: HTMLElement, appearing: boolean) {
+	protected onEntered({ onEntered }, isMask: boolean, node: HTMLElement, appearing: boolean) {
 		if (isMask) {
 			this.inMaskTransition = false;
 		} else {
@@ -222,7 +240,7 @@ export class Popup extends React.Component<PopupProps, {}> {
 		}
 	}
 
-	onExit({ onExit }: CSSTransitionProps, isMask: boolean, node: HTMLElement) {
+	protected onExit({ onExit }: CSSTransitionProps, isMask: boolean, node: HTMLElement) {
 		if (isMask) {
 			this.inMaskTransition = true;
 		} else {
@@ -234,7 +252,7 @@ export class Popup extends React.Component<PopupProps, {}> {
 		}
 	}
 
-	onExited({ onExited }: CSSTransitionProps, isMask: boolean, node: HTMLElement) {
+	protected onExited({ onExited }: CSSTransitionProps, isMask: boolean, node: HTMLElement) {
 		const { destroyOnClose, visible } = this.props;
 		const rootElement = findDOMNode(this.rootInstance) as HTMLElement;
 		const popupElement = findDOMNode(this.popupInstance) as HTMLElement;
@@ -269,7 +287,7 @@ export class Popup extends React.Component<PopupProps, {}> {
 		}
 	}
 
-	renderPopupMask() {
+	protected renderPopupMask() {
 		const {
 			prefixCls,
 			visible,
