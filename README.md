@@ -2,16 +2,19 @@
 
 ## 安装
 
-`npm install --save react-widget-popup`
+```
+npm install --save react-widget-popup
+```
 
 ## 使用
 
+[![Edit react-widget-popup](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/mystifying-keller-i2xlv?fontsize=14&hidenavigation=1&theme=dark)
+
 ```jsx
 import Popup from 'react-widget-popup';
+import 'react-widget-popup/style';
 
-...
-
-render(){
+export default function App(){
     return (
         <Popup
             visible={true}
@@ -24,8 +27,6 @@ render(){
         </Popup>
     )
 }
-
-...
 
 ```
 
@@ -122,10 +123,7 @@ interface PopupProps extends React.HTMLAttributes<any> {
 
 ```css
 .rw-popup-root {
-    position: absolute;
-    left: 0;
-    top: 0;
-    right: 0;
+    /* TODO */
 }
 
 .rw-popup {
