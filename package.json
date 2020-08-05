@@ -1,6 +1,6 @@
 {
 	"name": "react-widget-popup",
-	"version": "3.4.6",
+	"version": "3.4.7",
 	"description": "",
 	"main": "cjs/index.js",
 	"module": "esm/index.js",

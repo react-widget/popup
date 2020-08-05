@@ -7,7 +7,7 @@ export default class DEMO extends Component {
 		visible: false,
 	};
 
-	toggleClick = e => {
+	toggleClick = (e) => {
 		const { visible } = this.state;
 		this.setState({
 			visible: !visible,
@@ -37,15 +37,15 @@ export default class DEMO extends Component {
 					visible={visible}
 					transition={{
 						timeout: 500,
-						onEnter: node => {
+						onEnter: (node) => {
 							$(node).hide();
 							$(node).stop().fadeIn(500);
 						},
-						onExit: node => {
+						onExit: (node) => {
 							$(node).stop().fadeOut(500);
 						},
 					}}
-					getPosition={dom => {
+					getPosition={(dom) => {
 						console.log(dom);
 						return {
 							left: "50%",

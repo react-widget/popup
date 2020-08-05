@@ -365,7 +365,7 @@ export class Popup extends React.Component<PopupProps, {}> {
 		} = this.props;
 
 		const RootComponent = rootComponent!;
-		const Component = rootComponent!;
+		const Component = component!;
 
 		delete childProps.mask;
 		delete childProps.maskProps;
