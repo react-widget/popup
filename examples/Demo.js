@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, StrictMode } from "react";
 import DemoList from "./DemoList";
 
 export default class Demo extends Component {
@@ -15,22 +15,24 @@ export default class Demo extends Component {
 	render() {
 		const { current } = this.state;
 		return (
-			<div className="container">
-				<div className="slider">
-					{DemoList.map((item, i) => {
-						return (
-							<div
-								key={i}
-								className={current === item ? "active" : ""}
-								onClick={this.onDemoChange.bind(this, item)}
-							>
-								{item.label}
-							</div>
-						);
-					})}
+			<StrictMode>
+				<div className="container">
+					<div className="slider">
+						{DemoList.map((item, i) => {
+							return (
+								<div
+									key={i}
+									className={current === item ? "active" : ""}
+									onClick={this.onDemoChange.bind(this, item)}
+								>
+									{item.label}
+								</div>
+							);
+						})}
+					</div>
+					<div className="content">{current ? <current.component /> : null}</div>
 				</div>
-				<div className="content">{current ? <current.component /> : null}</div>
-			</div>
+			</StrictMode>
 		);
 	}
 }

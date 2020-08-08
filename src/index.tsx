@@ -343,6 +343,11 @@ export class Popup extends React.Component<PopupProps, {}> {
 		);
 	}
 
+	addEndListener = (_: any, cb: () => void) => {
+		const transition = this.props.transition;
+		transition?.addEndListener?.(findDOMNode(this.popupInstance) as HTMLElement, cb);
+	};
+
 	render() {
 		const {
 			style,
@@ -441,11 +446,8 @@ export class Popup extends React.Component<PopupProps, {}> {
 					enter
 					exit
 					appear
-					addEndListener={
-						transition!.addEndListener ||
-						((_, cb) => transition!.timeout == null && cb())
-					}
-					timeout={transition!.timeout}
+					addEndListener={transition!.addEndListener ? this.addEndListener : undefined}
+					timeout={transition!.timeout!}
 					in={visible}
 					unmountOnExit={destroyOnClose}
 					mountOnEnter={lazy}

@@ -1,6 +1,6 @@
 {
 	"name": "react-widget-popup",
-	"version": "3.4.7",
+	"version": "3.4.8",
 	"description": "",
 	"main": "cjs/index.js",
 	"module": "esm/index.js",
@@ -10,10 +10,10 @@
 		"react-dom": ">=16.8.0"
 	},
 	"dependencies": {
-		"@types/react-transition-group": "^4.2.4",
 		"@babel/runtime": "^7.9.2",
+		"@types/react-transition-group": "^4.4.0",
 		"classnames": "^2.2.6",
-		"react-transition-group": "^4.3.0"
+		"react-transition-group": "^4.4.1"
 	},
 	"devDependencies": {
 		"@types/enzyme": "^3.10.5",
